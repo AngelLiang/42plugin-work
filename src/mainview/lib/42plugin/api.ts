@@ -50,13 +50,15 @@ export async function fetchInstalledPlugins(): Promise<Plugin[]> {
       const pluginArray = Array.isArray(plugins) ? plugins : [];
       return pluginArray.map(p => ({
         id: p.id,
-        name: p.fullName,
-        description: p.linkPath || '',
+        name: p.name || p.fullName,
+        description: p.description || p.descriptionZh || '',
         version: p.version,
-        author: p.fullName?.split('/')[0] || 'Unknown',
+        author: p.author?.username || p.fullName?.split('/')[0] || 'Unknown',
         installed: true,
+        fullName: p.fullName,
         linkPath: p.linkPath,
         installedAt: p.installedAt,
+        tags: p.tags,
       }));
     } catch {
       const plugins: Plugin[] = [];
@@ -97,6 +99,7 @@ export async function searchPlugins(query: string): Promise<Plugin[]> {
         version: p.version,
         author: p.author?.username || 'Unknown',
         installed: false,
+        type: p.type || p.plugin_type,
       }));
     } catch {
       const plugins: Plugin[] = [];
@@ -139,6 +142,7 @@ export async function fetchPlugins(page = 1, perPage = 12): Promise<{ plugins: P
       descriptionZh: p.description_zh,
       homepage: p.homepage,
       tags: p.tags,
+      type: p.type || p.plugin_type,
     }));
     return { plugins, hasMore: pluginsArray.length === perPage };
   } catch (error) {
@@ -219,11 +223,11 @@ export async function fetchConversationHistory(workDir?: string): Promise<Conver
 }
 
 export async function installPlugin(pluginId: string): Promise<void> {
-  await run42plugin(['install', pluginId, '-y']);
+  await run42plugin(['install', pluginId, '-g']);
 }
 
 export async function uninstallPlugin(pluginName: string): Promise<void> {
-  await run42plugin(['uninstall', pluginName, '-y']);
+  await run42plugin(['uninstall', pluginName, '-g']);
 }
 
 export async function login(): Promise<void> {

@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { List, Card, Tag, Space, Button, Badge, Typography, Spin } from 'antd';
 import { CheckCircleOutlined, DownloadOutlined } from '@ant-design/icons';
 import type { Plugin } from '@/lib/42plugin/types';
@@ -21,6 +21,7 @@ export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loa
   const isListMode = !searchQuery.trim();
   const displayPlugins = isListMode ? listedPlugins : plugins;
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isListMode || !onLoadMore) return;
@@ -47,7 +48,7 @@ export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loa
         <Text type="secondary" style={{ display: 'block', marginBottom: 12, fontSize: 12 }}>插件列表</Text>
       )}
       <List
-        grid={{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 2, xl: 3, xxl: 3 }}
+        grid={{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }}
         dataSource={displayPlugins}
         locale={{ emptyText: isListMode ? '暂无插件' : '未找到相关插件' }}
       renderItem={(plugin) => (
@@ -57,6 +58,8 @@ export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loa
             hoverable
             style={{ borderRadius: 'var(--radius-xl)' }}
             onClick={() => onPluginClick(plugin)}
+            onMouseEnter={() => setHoveredId(plugin.id)}
+            onMouseLeave={() => setHoveredId(null)}
             actions={[
               plugin.installed ? (
                 <Button type="text" icon={<CheckCircleOutlined style={{ color: 'oklch(0.623 0.214 259.815)' }} />} disabled>
@@ -76,6 +79,7 @@ export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loa
                     background: 'oklch(0.546 0.245 262.881)',
                     borderColor: 'oklch(0.546 0.245 262.881)',
                     borderRadius: 'var(--radius-md)',
+                    visibility: hoveredId === plugin.id ? 'visible' : 'hidden',
                   }}
                 >
                   安装
@@ -96,13 +100,16 @@ export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loa
                     {plugin.description}
                   </Paragraph>
                   <Space size="small">
-                    <Tag style={{
-                      background: 'oklch(0.546 0.245 262.881 / 15%)',
-                      color: 'oklch(0.623 0.214 259.815)',
-                      border: '1px solid oklch(0.546 0.245 262.881 / 30%)',
-                      borderRadius: 'var(--radius-sm)',
-                      fontSize: 11,
-                    }}>v{plugin.version}</Tag>
+                    {plugin.type && (
+                      <Tag style={{
+                        background: 'oklch(0.546 0.245 262.881 / 15%)',
+                        color: 'oklch(0.623 0.214 259.815)',
+                        border: '1px solid oklch(0.546 0.245 262.881 / 30%)',
+                        borderRadius: 'var(--radius-sm)',
+                        fontSize: 11,
+                        margin: 0,
+                      }}>{plugin.type}</Tag>
+                    )}
                     <Text type="secondary" style={{ fontSize: 12 }}>
                       by {plugin.author}
                     </Text>

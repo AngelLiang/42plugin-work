@@ -11,6 +11,7 @@ export interface Plugin {
   descriptionZh?: string;
   homepage?: string;
   tags?: string[];
+  type?: string;
 }
 
 export interface StatusData {

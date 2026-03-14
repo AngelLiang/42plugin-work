@@ -93,6 +93,7 @@ export function PluginMarketPage() {
           <InstalledTab
             plugins={plugins.installedPlugins}
             onUninstall={handleUninstall}
+            onPluginClick={setSelectedPlugin}
           />
         </Col>
       </Row>
