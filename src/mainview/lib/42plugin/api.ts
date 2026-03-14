@@ -126,9 +126,12 @@ export async function searchPlugins(query: string): Promise<Plugin[]> {
   }
 }
 
-export async function fetchPlugins(page = 1, perPage = 12): Promise<{ plugins: Plugin[]; hasMore: boolean }> {
+export async function fetchPlugins(page = 1, perPage = 12, type?: string, sort?: string): Promise<{ plugins: Plugin[]; hasMore: boolean }> {
   try {
-    const text = await view.rpc!.request.httpFetch({ url: `https://42plugin.com/api/v1/plugins?page=${page}&per_page=${perPage}` });
+    const params = new URLSearchParams({ page: String(page), per_page: String(perPage) });
+    if (type) params.set('type', type);
+    if (sort) params.set('sort', sort);
+    const text = await view.rpc!.request.httpFetch({ url: `https://42plugin.com/api/v1/plugins?${params}` });
     const data = JSON.parse(text);
     const pluginsArray = Array.isArray(data.data) ? data.data : [];
     const plugins = pluginsArray.map((p: any) => ({
@@ -143,6 +146,9 @@ export async function fetchPlugins(page = 1, perPage = 12): Promise<{ plugins: P
       homepage: p.homepage,
       tags: p.tags,
       type: p.type || p.plugin_type,
+      downloads: p.downloads,
+      score10: p.score?.score10,
+      stars: p.score?.stars,
     }));
     return { plugins, hasMore: pluginsArray.length === perPage };
   } catch (error) {

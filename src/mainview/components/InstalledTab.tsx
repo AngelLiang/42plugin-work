@@ -1,4 +1,6 @@
-import { List, Tag, Space, Button, Typography } from 'antd';
+import { useState } from 'react';
+import { List, Tag, Space, Button, Typography, Tooltip } from 'antd';
+import { CopyOutlined, CheckOutlined } from '@ant-design/icons';
 import type { Plugin } from '@/lib/42plugin/types';
 
 const { Text } = Typography;
@@ -10,6 +12,16 @@ interface InstalledTabProps {
 }
 
 export function InstalledTab({ plugins, onUninstall, onPluginClick }: InstalledTabProps) {
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopy = (e: React.MouseEvent, plugin: Plugin) => {
+    e.stopPropagation();
+    const cmd = `42plugin install ${plugin.fullName || plugin.id}`;
+    navigator.clipboard.writeText(cmd);
+    setCopiedId(plugin.id);
+    setTimeout(() => setCopiedId(null), 1500);
+  };
+
   return (
     <List
       dataSource={plugins}

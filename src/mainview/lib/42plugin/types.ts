@@ -12,6 +12,9 @@ export interface Plugin {
   homepage?: string;
   tags?: string[];
   type?: string;
+  downloads?: number;
+  score10?: number;
+  stars?: number;
 }
 
 export interface StatusData {

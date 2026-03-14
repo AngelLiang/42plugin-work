@@ -1,5 +1,5 @@
-import { Layout, Space, Button, Avatar } from 'antd';
-import { UserOutlined, LoginOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Layout, Space, Button } from 'antd';
+import { LoginOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Typography } from 'antd';
 
 const { Header } = Layout;
@@ -37,11 +37,6 @@ export function AppHeader({ isLoggedIn, username, handleLogin, handleLogout, tit
       <Space>
         {isLoggedIn ? (
           <>
-            <Avatar
-              icon={<UserOutlined />}
-              size={28}
-              style={{ background: 'oklch(0.546 0.245 262.881)', cursor: 'default' }}
-            />
             <Text style={{ color: 'var(--text-secondary)', fontSize: 13 }}>{username}</Text>
             <Button
               icon={<LogoutOutlined />}

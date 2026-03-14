@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import { List, Card, Tag, Space, Button, Badge, Typography, Spin } from 'antd';
-import { CheckCircleOutlined, DownloadOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, DownloadOutlined, StarFilled } from '@ant-design/icons';
 import type { Plugin } from '@/lib/42plugin/types';
 
 const { Paragraph, Text } = Typography;
@@ -60,63 +60,73 @@ export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loa
             onClick={() => onPluginClick(plugin)}
             onMouseEnter={() => setHoveredId(plugin.id)}
             onMouseLeave={() => setHoveredId(null)}
-            actions={[
-              plugin.installed ? (
-                <Button type="text" icon={<CheckCircleOutlined style={{ color: 'oklch(0.623 0.214 259.815)' }} />} disabled>
-                  已安装
-                </Button>
-              ) : (
-                <Button
-                  type="primary"
-                  icon={<DownloadOutlined />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onInstall(plugin.id);
-                  }}
-                  disabled={!isLoggedIn}
-                  style={{
-                    cursor: isLoggedIn ? 'pointer' : 'not-allowed',
-                    background: 'oklch(0.546 0.245 262.881)',
-                    borderColor: 'oklch(0.546 0.245 262.881)',
-                    borderRadius: 'var(--radius-md)',
-                    visibility: hoveredId === plugin.id ? 'visible' : 'hidden',
-                  }}
-                >
-                  安装
-                </Button>
-              ),
-            ]}
+            title={
+              <Space>
+                {plugin.name}
+                {plugin.installed && <Badge status="success" color="oklch(0.623 0.214 259.815)" />}
+              </Space>
+            }
+            extra={
+              <div style={{ paddingRight: 4 }}>
+                {plugin.installed ? (
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<CheckCircleOutlined style={{ color: 'oklch(0.623 0.214 259.815)' }} />}
+                    disabled
+                  >
+                    已安装
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    size="small"
+                    icon={<DownloadOutlined />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onInstall(plugin.id);
+                    }}
+                    disabled={!isLoggedIn}
+                    style={{
+                      cursor: isLoggedIn ? 'pointer' : 'not-allowed',
+                      background: 'oklch(0.546 0.245 262.881)',
+                      borderColor: 'oklch(0.546 0.245 262.881)',
+                      borderRadius: 'var(--radius-md)',
+                      visibility: hoveredId === plugin.id ? 'visible' : 'hidden',
+                    }}
+                  >
+                    安装
+                  </Button>
+                )}
+              </div>
+            }
           >
-            <Card.Meta
-              title={
-                <Space>
-                  {plugin.name}
-                  {plugin.installed && <Badge status="success" color="oklch(0.623 0.214 259.815)" />}
-                </Space>
-              }
-              description={
-                <>
-                  <Paragraph ellipsis={{ rows: 2 }} style={{ marginBottom: 8 }}>
-                    {plugin.description}
-                  </Paragraph>
-                  <Space size="small">
-                    {plugin.type && (
-                      <Tag style={{
-                        background: 'oklch(0.546 0.245 262.881 / 15%)',
-                        color: 'oklch(0.623 0.214 259.815)',
-                        border: '1px solid oklch(0.546 0.245 262.881 / 30%)',
-                        borderRadius: 'var(--radius-sm)',
-                        fontSize: 11,
-                        margin: 0,
-                      }}>{plugin.type}</Tag>
-                    )}
-                    <Text type="secondary" style={{ fontSize: 12 }}>
-                      by {plugin.author}
-                    </Text>
-                  </Space>
-                </>
-              }
-            />
+            <Paragraph ellipsis={{ rows: 2 }} style={{ marginBottom: 8 }}>
+              {plugin.description}
+            </Paragraph>
+            <Space size="small" wrap>
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                <DownloadOutlined style={{ marginRight: 4 }} />
+                {plugin.downloads ?? '-'}
+              </span>
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                <StarFilled style={{ marginRight: 4, color: '#faad14' }} />
+                {plugin.score10 ?? '-'}
+              </span>
+              {plugin.type && (
+                <Tag style={{
+                  background: 'oklch(0.546 0.245 262.881 / 15%)',
+                  color: 'oklch(0.623 0.214 259.815)',
+                  border: '1px solid oklch(0.546 0.245 262.881 / 30%)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: 11,
+                  margin: 0,
+                }}>{plugin.type}</Tag>
+              )}
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                by {plugin.author}
+              </Text>
+            </Space>
           </Card>
         </List.Item>
       )}

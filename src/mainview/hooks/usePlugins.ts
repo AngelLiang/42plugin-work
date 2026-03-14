@@ -25,6 +25,8 @@ export function usePlugins() {
   const [loading, setLoading] = useState(false);
   const [pluginAvailable, setPluginAvailable] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [filterType, setFilterType] = useState<string | undefined>(undefined);
+  const [filterSort, setFilterSort] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     checkAvailability();
@@ -42,9 +44,9 @@ export function usePlugins() {
     await loadPlugins();
   };
 
-  const loadPlugins = async () => {
+  const loadPlugins = async (type?: string, sort?: string) => {
     try {
-      const { plugins, hasMore } = await fetchPlugins(1);
+      const { plugins, hasMore } = await fetchPlugins(1, 12, type, sort);
       setListedPlugins(plugins);
       setListedPage(1);
       setHasMoreListed(hasMore);
@@ -58,7 +60,7 @@ export function usePlugins() {
     setLoadingMore(true);
     try {
       const nextPage = listedPage + 1;
-      const { plugins: more, hasMore } = await fetchPlugins(nextPage);
+      const { plugins: more, hasMore } = await fetchPlugins(nextPage, 12, filterType, filterSort);
       setListedPlugins(prev => [...prev, ...more]);
       setListedPage(nextPage);
       setHasMoreListed(hasMore);
@@ -67,6 +69,12 @@ export function usePlugins() {
     } finally {
       setLoadingMore(false);
     }
+  };
+
+  const handleFilter = async (type?: string, sort?: string) => {
+    setFilterType(type);
+    setFilterSort(sort);
+    await loadPlugins(type, sort);
   };
 
   const loadInstalledPlugins = async () => {
@@ -136,9 +144,12 @@ export function usePlugins() {
     actionLoading,
     loadingMore,
     hasMoreListed,
+    filterType,
+    filterSort,
     handleSearch,
     handleInstall,
     handleUninstall,
     loadMorePlugins,
+    handleFilter,
   };
 }

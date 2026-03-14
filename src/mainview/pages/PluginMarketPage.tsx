@@ -10,10 +10,67 @@ import type { Plugin } from '@/lib/42plugin/types';
 const { Search } = Input;
 const { Title } = Typography;
 
+const TYPE_OPTIONS = [
+  { label: '全部', value: '' },
+  { label: 'Skill', value: 'skill' },
+  { label: 'Command', value: 'command' },
+  { label: 'Hook', value: 'hook' },
+  { label: 'Agent', value: 'agent' },
+];
+
+const SORT_OPTIONS = [
+  { label: '活水指数', value: '' },
+  { label: '最近更新', value: 'updated' },
+  { label: '下载量', value: 'downloads' },
+];
+
+function FilterBar({ label, options, value, onChange }: {
+  label: string;
+  options: { label: string; value: string }[];
+  value: string;
+  onChange: (val: string) => void;
+}) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+      <span style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>{label}</span>
+      {options.map(opt => {
+        const active = value === opt.value;
+        return (
+          <button
+            key={opt.value}
+            onClick={() => onChange(opt.value)}
+            style={{
+              fontSize: 12,
+              padding: '2px 10px',
+              borderRadius: 'var(--radius-full)',
+              border: active ? '1px solid var(--color-primary-border)' : '1px solid transparent',
+              background: active ? 'var(--color-primary-subtle)' : 'transparent',
+              color: active ? 'var(--color-accent)' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontWeight: active ? 500 : 400,
+              transition: 'all 0.15s',
+            }}
+          >
+            {opt.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export function PluginMarketPage() {
   const auth = useAuth();
   const plugins = usePlugins();
   const [selectedPlugin, setSelectedPlugin] = useState<Plugin | null>(null);
+
+  const handleTypeChange = (type: string) => {
+    plugins.handleFilter(type || undefined, plugins.filterSort);
+  };
+
+  const handleSortChange = (sort: string) => {
+    plugins.handleFilter(plugins.filterType, sort || undefined);
+  };
 
   const handleSearch = async (value: string) => {
     const result = await plugins.handleSearch(value);
@@ -57,8 +114,12 @@ export function PluginMarketPage() {
             size="middle"
             onSearch={handleSearch}
             loading={plugins.loading}
-            style={{ marginBottom: '16px' }}
+            style={{ marginBottom: '12px' }}
           />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
+            <FilterBar label="类型" options={TYPE_OPTIONS} value={plugins.filterType ?? ''} onChange={handleTypeChange} />
+            <FilterBar label="排序" options={SORT_OPTIONS} value={plugins.filterSort ?? ''} onChange={handleSortChange} />
+          </div>
           <SearchTab
             plugins={plugins.plugins}
             listedPlugins={plugins.listedPlugins}
