@@ -1,0 +1,91 @@
+:root {
+  /* Background layers - Light mode (default) */
+  --bg-base: oklch(1 0 0);
+  --bg-surface: oklch(0.97 0.001 106);
+  --bg-elevated: oklch(0.94 0.002 106);
+  --bg-hover: oklch(0 0 0 / 5%);
+  --bg-active: oklch(0 0 0 / 8%);
+
+  /* Brand colors - Purple (same in both modes) */
+  --color-primary: oklch(0.546 0.245 262.881);
+  --color-primary-hex: #7c3aed;
+  --color-accent: oklch(0.623 0.214 259.815);
+
+  /* Text */
+  --text-primary: oklch(0.147 0.004 49.25);
+  --text-secondary: oklch(0.147 0.004 49.25 / 60%);
+  --text-muted: oklch(0.147 0.004 49.25 / 40%);
+
+  /* Borders */
+  --border-subtle: oklch(0.923 0.003 48.717);
+  --border-default: oklch(0.88 0.004 48.717);
+
+  /* Chat bubbles */
+  --bubble-user-bg: oklch(0.546 0.245 262.881);
+  --bubble-user-text: oklch(1 0 0);
+  --bubble-assistant-bg: oklch(0.94 0.002 106);
+  --bubble-assistant-border: oklch(0.88 0.004 48.717);
+  --bubble-assistant-text: oklch(0.147 0.004 49.25);
+
+  /* Radius system */
+  --radius-sm: 0.35rem;
+  --radius-md: 0.55rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1.15rem;
+  --radius-2xl: 1.55rem;
+
+  /* Legacy aliases */
+  --color-background: var(--bg-base);
+  --color-background-soft: var(--bg-surface);
+  --color-background-mute: var(--bg-elevated);
+  --color-text: var(--text-primary);
+}
+
+[data-theme="dark"] {
+  --bg-base: oklch(0.147 0.004 49.25);
+  --bg-surface: oklch(0.18 0.004 49.25);
+  --bg-elevated: oklch(0.21 0.004 49.25);
+  --bg-hover: oklch(1 0 0 / 6%);
+  --bg-active: oklch(1 0 0 / 10%);
+
+  --text-primary: oklch(0.985 0.001 106.423);
+  --text-secondary: oklch(0.985 0.001 106.423 / 55%);
+  --text-muted: oklch(0.985 0.001 106.423 / 35%);
+
+  --border-subtle: oklch(1 0 0 / 8%);
+  --border-default: oklch(1 0 0 / 12%);
+
+  --bubble-assistant-bg: oklch(0.21 0.004 49.25);
+  --bubble-assistant-border: oklch(1 0 0 / 10%);
+  --bubble-assistant-text: oklch(0.985 0.001 106.423);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+ul {
+  list-style: none;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-background);
+  line-height: 1.6;
+  font-family:
+    'Geist',
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
