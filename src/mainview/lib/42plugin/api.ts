@@ -45,46 +45,61 @@ export async function fetchStatus(): Promise<StatusData | null> {
   }
 }
 
-export async function fetchInstalledPlugins(): Promise<Plugin[]> {
+function parsePluginList(output: string, isGlobal: boolean): Plugin[] {
   try {
-    const output = await run42plugin(['list', '--all', '--json']);
-
-    try {
-      const plugins = JSON.parse(output);
-      const pluginArray = Array.isArray(plugins) ? plugins : [];
-      return pluginArray.map(p => ({
-        id: p.id,
-        name: p.name || p.fullName,
-        description: p.description || p.descriptionZh || '',
-        version: p.version,
-        author: p.author?.username || p.fullName?.split('/')[0] || 'Unknown',
-        installed: true,
-        fullName: p.fullName,
-        linkPath: p.linkPath,
-        installedAt: p.installedAt,
-        tags: p.tags,
-      }));
-    } catch {
-      const plugins: Plugin[] = [];
-      const lines = output.split('\n').filter(line => line.trim());
-
-      for (const line of lines) {
-        const parts = line.split(/\s+/);
-        if (parts.length >= 3) {
-          plugins.push({
-            id: parts[0],
-            name: parts[0],
-            version: parts[1],
-            description: parts.slice(2, -1).join(' '),
-            author: parts[parts.length - 1],
-            installed: true,
-          });
-        }
+    const plugins = JSON.parse(output);
+    const pluginArray = Array.isArray(plugins) ? plugins : [];
+    return pluginArray.map(p => ({
+      id: p.id,
+      name: p.name || p.fullName,
+      description: p.description || p.descriptionZh || '',
+      version: p.version,
+      author: p.author?.username || p.fullName?.split('/')[0] || 'Unknown',
+      installed: true,
+      isGlobal,
+      fullName: p.fullName,
+      linkPath: p.linkPath,
+      installedAt: p.installedAt,
+      tags: p.tags,
+    }));
+  } catch {
+    const plugins: Plugin[] = [];
+    const lines = output.split('\n').filter(line => line.trim());
+    for (const line of lines) {
+      const parts = line.split(/\s+/);
+      if (parts.length >= 3) {
+        plugins.push({
+          id: parts[0],
+          name: parts[0],
+          version: parts[1],
+          description: parts.slice(2, -1).join(' '),
+          author: parts[parts.length - 1],
+          installed: true,
+          isGlobal,
+        });
       }
-      return plugins;
     }
+    return plugins;
+  }
+}
+
+export async function fetchProjectPlugins(workDir?: string): Promise<Plugin[]> {
+  if (!workDir) return [];
+  try {
+    const output = await run42plugin(['list', '--json'], workDir);
+    return parsePluginList(output, false);
   } catch (error) {
-    console.error("Failed to load installed plugins:", error);
+    console.error("Failed to load project plugins:", error);
+    return [];
+  }
+}
+
+export async function fetchGlobalPlugins(): Promise<Plugin[]> {
+  try {
+    const output = await run42plugin(['list', '--json', '-g']);
+    return parsePluginList(output, true);
+  } catch (error) {
+    console.error("Failed to load global plugins:", error);
     return [];
   }
 }

@@ -5,6 +5,7 @@ export interface Plugin {
   version: string;
   author: string;
   installed: boolean;
+  isGlobal?: boolean;
   linkPath?: string;
   installedAt?: string;
   fullName?: string;

@@ -1,31 +1,25 @@
-import { useState } from 'react';
-import { List, Tag, Space, Button, Typography, Tooltip } from 'antd';
-import { CopyOutlined, CheckOutlined } from '@ant-design/icons';
+import { List, Tag, Button, Typography, Divider } from 'antd';
 import type { Plugin } from '@/lib/42plugin/types';
 
 const { Text } = Typography;
 
 interface InstalledTabProps {
-  plugins: Plugin[];
-  onUninstall: (pluginId: string) => void;
+  projectPlugins: Plugin[];
+  globalPlugins: Plugin[];
+  workDir?: string;
+  onUninstall: (pluginId: string, isGlobal: boolean) => void;
   onPluginClick?: (plugin: Plugin) => void;
 }
 
-export function InstalledTab({ plugins, onUninstall, onPluginClick }: InstalledTabProps) {
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-
-  const handleCopy = (e: React.MouseEvent, plugin: Plugin) => {
-    e.stopPropagation();
-    const cmd = `42plugin install ${plugin.fullName || plugin.id}`;
-    navigator.clipboard.writeText(cmd);
-    setCopiedId(plugin.id);
-    setTimeout(() => setCopiedId(null), 1500);
-  };
-
+function PluginList({ plugins, onUninstall, onPluginClick }: {
+  plugins: Plugin[];
+  onUninstall: (pluginId: string, isGlobal: boolean) => void;
+  onPluginClick?: (plugin: Plugin) => void;
+}) {
   return (
     <List
       dataSource={plugins}
-      locale={{ emptyText: '暂无已安装的插件' }}
+      locale={{ emptyText: '暂无插件' }}
       renderItem={(plugin) => (
         <List.Item
           onClick={() => onPluginClick?.(plugin)}
@@ -40,7 +34,7 @@ export function InstalledTab({ plugins, onUninstall, onPluginClick }: InstalledT
             <Button
               size="small"
               danger
-              onClick={(e) => { e.stopPropagation(); onUninstall(plugin.name); }}
+              onClick={(e) => { e.stopPropagation(); onUninstall(plugin.name, !!plugin.isGlobal); }}
               style={{ borderRadius: 'var(--radius-sm)', fontSize: 11 }}
             >
               卸载
@@ -69,5 +63,43 @@ export function InstalledTab({ plugins, onUninstall, onPluginClick }: InstalledT
         </List.Item>
       )}
     />
+  );
+}
+
+function SectionTitle({ label, count }: { label: string; count: number }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+      <Text style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>{label}</Text>
+      {count > 0 && (
+        <span style={{
+          fontSize: 10,
+          background: 'oklch(0.546 0.245 262.881 / 20%)',
+          color: 'oklch(0.623 0.214 259.815)',
+          padding: '1px 6px',
+          borderRadius: 'var(--radius-2xl)',
+          fontWeight: 500,
+        }}>{count}</span>
+      )}
+    </div>
+  );
+}
+
+export function InstalledTab({ projectPlugins, globalPlugins, workDir, onUninstall, onPluginClick }: InstalledTabProps) {
+  return (
+    <div>
+      <SectionTitle label="项目插件" count={projectPlugins.length} />
+      {!workDir ? (
+        <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 16 }}>未选择项目</Text>
+      ) : projectPlugins.length === 0 ? (
+        <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 16 }}>暂无项目插件</Text>
+      ) : (
+        <PluginList plugins={projectPlugins} onUninstall={onUninstall} onPluginClick={onPluginClick} />
+      )}
+
+      <Divider style={{ margin: '12px 0', borderColor: 'var(--border-subtle)' }} />
+
+      <SectionTitle label="全局插件" count={globalPlugins.length} />
+      <PluginList plugins={globalPlugins} onUninstall={onUninstall} onPluginClick={onPluginClick} />
+    </div>
   );
 }

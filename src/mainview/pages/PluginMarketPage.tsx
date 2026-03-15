@@ -61,7 +61,7 @@ function FilterBar({ label, options, value, onChange }: {
 
 export function PluginMarketPage({ workDir }: { workDir?: string }) {
   const auth = useAuth();
-  const plugins = usePlugins();
+  const plugins = usePlugins(workDir);
   const [selectedPlugin, setSelectedPlugin] = useState<Plugin | null>(null);
 
   const handleTypeChange = (type: string) => {
@@ -92,7 +92,7 @@ export function PluginMarketPage({ workDir }: { workDir?: string }) {
     }
   };
 
-  const handleUninstall = (pluginId: string) => {
+  const handleUninstall = (pluginId: string, isGlobal: boolean) => {
     Modal.confirm({
       title: '确认卸载',
       content: '确定要卸载该插件吗？',
@@ -100,7 +100,7 @@ export function PluginMarketPage({ workDir }: { workDir?: string }) {
       okType: 'danger',
       cancelText: '取消',
       onOk: async () => {
-        const result = await plugins.handleUninstall(pluginId, workDir);
+        const result = await plugins.handleUninstall(pluginId, isGlobal ? undefined : workDir);
         if (result.success) {
           message.success('卸载成功');
         } else {
@@ -144,24 +144,12 @@ export function PluginMarketPage({ workDir }: { workDir?: string }) {
 
         {/* 右栏：已安装 */}
         <Col style={{ width: 280, padding: '0 16px 16px', overflow: 'auto', minHeight: 0, flexShrink: 0 }}>
-          <Title level={5} style={{ marginTop: 0, marginBottom: 12, color: 'var(--text-primary)', fontWeight: 600 }}>
-            已安装 {plugins.installedPlugins.length > 0 && (
-              <span style={{
-                marginLeft: 6,
-                fontSize: 11,
-                background: 'oklch(0.546 0.245 262.881 / 20%)',
-                color: 'oklch(0.623 0.214 259.815)',
-                padding: '1px 7px',
-                borderRadius: 'var(--radius-2xl)',
-                fontWeight: 500,
-              }}>
-                {plugins.installedPlugins.length}
-              </span>
-            )}
-          </Title>
+          <Title level={5} style={{ marginTop: 0, marginBottom: 12, color: 'var(--text-primary)', fontWeight: 600 }}>已安装</Title>
           <Divider style={{ marginTop: 0, marginBottom: 12, borderColor: 'var(--border-subtle)' }} />
           <InstalledTab
-            plugins={plugins.installedPlugins}
+            projectPlugins={plugins.projectPlugins}
+            globalPlugins={plugins.globalPlugins}
+            workDir={workDir}
             onUninstall={handleUninstall}
             onPluginClick={setSelectedPlugin}
           />
@@ -207,7 +195,7 @@ export function PluginMarketPage({ workDir }: { workDir?: string }) {
                 okType: 'danger',
                 cancelText: '取消',
                 onOk: async () => {
-                  const result = await plugins.handleUninstall(pluginId, workDir);
+                  const result = await plugins.handleUninstall(pluginId, selectedPlugin?.isGlobal ? undefined : workDir);
                   if (result.success) {
                     message.success('卸载成功');
                     setSelectedPlugin(p => p ? { ...p, installed: false } : p);

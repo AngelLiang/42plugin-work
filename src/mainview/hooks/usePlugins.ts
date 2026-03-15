@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   checkPluginAvailability,
-  fetchInstalledPlugins,
+  fetchProjectPlugins,
+  fetchGlobalPlugins,
   searchPlugins,
   fetchPlugins,
   installPlugin,
@@ -19,9 +20,10 @@ const markInstalled = (list: Plugin[], installed: Plugin[]): Plugin[] => {
   return list.map(p => ({ ...p, installed: installedIds.has(p.id) }));
 };
 
-export function usePlugins() {
+export function usePlugins(workDir?: string) {
   const [plugins, setPlugins] = useState<Plugin[]>([]);
-  const [installedPlugins, setInstalledPlugins] = useState<Plugin[]>([]);
+  const [projectPlugins, setProjectPlugins] = useState<Plugin[]>([]);
+  const [globalPlugins, setGlobalPlugins] = useState<Plugin[]>([]);
   const installedPluginsRef = useRef<Plugin[]>([]);
   const [listedPlugins, setListedPlugins] = useState<Plugin[]>([]);
   const [listedPage, setListedPage] = useState(1);
@@ -37,6 +39,10 @@ export function usePlugins() {
   useEffect(() => {
     checkAvailability();
   }, []);
+
+  useEffect(() => {
+    loadInstalledPlugins();
+  }, [workDir]);
 
   const checkAvailability = async () => {
     try {
@@ -85,10 +91,15 @@ export function usePlugins() {
 
   const loadInstalledPlugins = async (): Promise<Plugin[]> => {
     try {
-      const result = await fetchInstalledPlugins();
-      setInstalledPlugins(result);
-      installedPluginsRef.current = result;
-      return result;
+      const [project, global] = await Promise.all([
+        fetchProjectPlugins(workDir),
+        fetchGlobalPlugins(),
+      ]);
+      setProjectPlugins(project);
+      setGlobalPlugins(global);
+      const all = [...project, ...global];
+      installedPluginsRef.current = all;
+      return all;
     } catch (error) {
       console.error('Failed to load installed plugins:', error);
       return [];
@@ -154,7 +165,8 @@ export function usePlugins() {
 
   return {
     plugins,
-    installedPlugins,
+    projectPlugins,
+    globalPlugins,
     listedPlugins,
     searchQuery,
     loading,
