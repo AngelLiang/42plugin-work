@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   checkPluginAvailability,
   fetchInstalledPlugins,
@@ -14,9 +14,15 @@ export interface ActionResult {
   error?: string;
 }
 
+const markInstalled = (list: Plugin[], installed: Plugin[]): Plugin[] => {
+  const installedIds = new Set(installed.map(p => p.name));
+  return list.map(p => ({ ...p, installed: installedIds.has(p.id) }));
+};
+
 export function usePlugins() {
   const [plugins, setPlugins] = useState<Plugin[]>([]);
   const [installedPlugins, setInstalledPlugins] = useState<Plugin[]>([]);
+  const installedPluginsRef = useRef<Plugin[]>([]);
   const [listedPlugins, setListedPlugins] = useState<Plugin[]>([]);
   const [listedPage, setListedPage] = useState(1);
   const [hasMoreListed, setHasMoreListed] = useState(true);
@@ -47,7 +53,7 @@ export function usePlugins() {
   const loadPlugins = async (type?: string, sort?: string) => {
     try {
       const { plugins, hasMore } = await fetchPlugins(1, 12, type, sort);
-      setListedPlugins(plugins);
+      setListedPlugins(markInstalled(plugins, installedPluginsRef.current));
       setListedPage(1);
       setHasMoreListed(hasMore);
     } catch (error) {
@@ -61,7 +67,7 @@ export function usePlugins() {
     try {
       const nextPage = listedPage + 1;
       const { plugins: more, hasMore } = await fetchPlugins(nextPage, 12, filterType, filterSort);
-      setListedPlugins(prev => [...prev, ...more]);
+      setListedPlugins(prev => [...prev, ...markInstalled(more, installedPluginsRef.current)]);
       setListedPage(nextPage);
       setHasMoreListed(hasMore);
     } catch (error) {
@@ -77,12 +83,15 @@ export function usePlugins() {
     await loadPlugins(type, sort);
   };
 
-  const loadInstalledPlugins = async () => {
+  const loadInstalledPlugins = async (): Promise<Plugin[]> => {
     try {
       const result = await fetchInstalledPlugins();
       setInstalledPlugins(result);
+      installedPluginsRef.current = result;
+      return result;
     } catch (error) {
       console.error('Failed to load installed plugins:', error);
+      return [];
     }
   };
 
@@ -96,7 +105,7 @@ export function usePlugins() {
     setLoading(true);
     try {
       const result = await searchPlugins(value);
-      setPlugins(result);
+      setPlugins(markInstalled(result, installedPluginsRef.current));
       return { success: true };
     } catch (error) {
       return { success: false, error: '搜索失败' };
@@ -110,7 +119,10 @@ export function usePlugins() {
     try {
       await installPlugin(pluginId, workDir);
       await loadInstalledPlugins();
-      setPlugins(plugins.map(p =>
+      setPlugins(prev => prev.map(p =>
+        p.id === pluginId ? { ...p, installed: true } : p
+      ));
+      setListedPlugins(prev => prev.map(p =>
         p.id === pluginId ? { ...p, installed: true } : p
       ));
       return { success: true };
@@ -126,6 +138,12 @@ export function usePlugins() {
     try {
       await uninstallPlugin(pluginId);
       await loadInstalledPlugins();
+      setPlugins(prev => prev.map(p =>
+        p.id === pluginId ? { ...p, installed: false } : p
+      ));
+      setListedPlugins(prev => prev.map(p =>
+        p.id === pluginId ? { ...p, installed: false } : p
+      ));
       return { success: true };
     } catch (error) {
       return { success: false, error: '卸载失败' };
