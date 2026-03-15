@@ -6,6 +6,7 @@ import { view } from '@/rpc';
 
 interface ProjectPickerPageProps {
   onSelect: (path: string) => void;
+  inline?: boolean;
 }
 
 function formatRelativeTime(ms: number): string {
@@ -19,7 +20,7 @@ function formatRelativeTime(ms: number): string {
   return `${days}天前`;
 }
 
-export const ProjectPickerPage: React.FC<ProjectPickerPageProps> = ({ onSelect }) => {
+export const ProjectPickerPage: React.FC<ProjectPickerPageProps> = ({ onSelect, inline }) => {
   const [projects, setProjects] = useState<RecentProject[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +36,10 @@ export const ProjectPickerPage: React.FC<ProjectPickerPageProps> = ({ onSelect }
   };
 
   return (
-    <div style={{
+    <div style={inline ? {
+      height: '100%',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    } : {
       position: 'fixed', inset: 0, zIndex: 1000,
       background: 'var(--bg-base)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -50,17 +54,6 @@ export const ProjectPickerPage: React.FC<ProjectPickerPageProps> = ({ onSelect }
       }}>
         {/* Header */}
         <div style={{ padding: '28px 28px 20px', borderBottom: '1px solid var(--border-subtle)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: 9,
-              background: 'oklch(0.546 0.245 262.881)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 15, fontWeight: 700, color: '#fff', flexShrink: 0,
-            }}>
-              42
-            </div>
-            <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>Work42</span>
-          </div>
           <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>选择一个工作目录开始</div>
         </div>
 

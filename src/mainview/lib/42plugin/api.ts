@@ -228,8 +228,11 @@ export async function fetchConversationHistory(workDir?: string): Promise<Conver
   }
 }
 
-export async function installPlugin(pluginId: string): Promise<void> {
-  await run42plugin(['install', pluginId, '-g']);
+export async function installPlugin(pluginId: string, workDir?: string): Promise<void> {
+  const args = workDir
+    ? ['install', pluginId, '--project-dir', workDir]
+    : ['install', pluginId, '-g'];
+  await run42plugin(args);
 }
 
 export async function uninstallPlugin(pluginName: string): Promise<void> {

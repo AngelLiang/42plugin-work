@@ -105,10 +105,10 @@ export function usePlugins() {
     }
   };
 
-  const handleInstall = async (pluginId: string): Promise<ActionResult> => {
+  const handleInstall = async (pluginId: string, workDir?: string): Promise<ActionResult> => {
     setActionLoading(true);
     try {
-      await installPlugin(pluginId);
+      await installPlugin(pluginId, workDir);
       await loadInstalledPlugins();
       setPlugins(plugins.map(p =>
         p.id === pluginId ? { ...p, installed: true } : p

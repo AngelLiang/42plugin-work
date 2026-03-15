@@ -59,7 +59,7 @@ function FilterBar({ label, options, value, onChange }: {
   );
 }
 
-export function PluginMarketPage() {
+export function PluginMarketPage({ workDir }: { workDir?: string }) {
   const auth = useAuth();
   const plugins = usePlugins();
   const [selectedPlugin, setSelectedPlugin] = useState<Plugin | null>(null);
@@ -84,7 +84,7 @@ export function PluginMarketPage() {
       message.warning('请先登录');
       return;
     }
-    const result = await plugins.handleInstall(pluginId);
+    const result = await plugins.handleInstall(pluginId, workDir);
     if (result.success) {
       message.success('安装成功');
     } else {
@@ -182,7 +182,7 @@ export function PluginMarketPage() {
             plugin={selectedPlugin}
             onInstall={async (pluginId) => {
               if (!auth.isLoggedIn) { message.warning('请先登录'); return; }
-              const result = await plugins.handleInstall(pluginId);
+              const result = await plugins.handleInstall(pluginId, workDir);
               if (result.success) {
                 message.success('安装成功');
                 setSelectedPlugin(p => p ? { ...p, installed: true } : p);

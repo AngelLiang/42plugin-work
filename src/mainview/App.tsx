@@ -7,7 +7,6 @@ import { Sidebar } from "@/components/Sidebar";
 import { PluginMarketPage } from "@/pages/PluginMarketPage";
 import { AccountPage } from "@/pages/AccountPage";
 import { ChatPage } from "@/pages/ChatPage";
-import { ProjectPickerPage } from "@/pages/ProjectPickerPage";
 
 const { Content } = Layout;
 
@@ -16,11 +15,8 @@ type ThemeMode = 'light' | 'dark';
 function App() {
   const auth = useAuth();
   const plugins = usePlugins();
-  const [showProjectPicker, setShowProjectPicker] = useState(true);
   const [activeView, setActiveView] = useState<'chat' | 'market' | 'settings'>('market');
   const [workDir, setWorkDir] = useState<string>(() => localStorage.getItem('workDir') || '');
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-  const [selectedProjectPath, setSelectedProjectPath] = useState<string>('');
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
     const saved = localStorage.getItem('theme');
     return (saved === 'dark' || saved === 'light') ? saved : 'light';
@@ -31,10 +27,9 @@ function App() {
     localStorage.setItem('theme', themeMode);
   }, [themeMode]);
 
-  const handleProjectSelect = (path: string) => {
+  const handleWorkDirChange = (path: string) => {
     setWorkDir(path);
     localStorage.setItem('workDir', path);
-    setShowProjectPicker(false);
   };
 
   const handleThemeChange = (mode: ThemeMode) => {
@@ -59,11 +54,6 @@ function App() {
     }
   };
 
-  const handleSelectConversation = (id: string, projectPath: string) => {
-    setSelectedConversationId(id);
-    setSelectedProjectPath(projectPath);
-  };
-
   const renderContent = () => {
     switch (activeView) {
       case 'chat':
@@ -80,8 +70,8 @@ function App() {
               />
             )}
             <ChatPage
-              conversationId={selectedConversationId}
-              projectPath={selectedProjectPath}
+              workDir={workDir}
+              onWorkDirChange={handleWorkDirChange}
             />
           </>
         );
@@ -98,7 +88,7 @@ function App() {
                 style={{ marginBottom: 24 }}
               />
             )}
-            <PluginMarketPage />
+            <PluginMarketPage workDir={workDir} />
           </>
         );
       case 'settings':
@@ -166,23 +156,24 @@ function App() {
   return (
     <ConfigProvider theme={antdToken}>
       <Layout style={{ minHeight: "100vh", background: 'var(--bg-base)' }}>
-        {showProjectPicker && <ProjectPickerPage onSelect={handleProjectSelect} />}
         <Sidebar
           activeView={activeView}
           onViewChange={setActiveView}
           workDir={workDir}
-          onWorkDirChange={setWorkDir}
-          onSelectConversation={handleSelectConversation}
+          onWorkDirChange={handleWorkDirChange}
         />
 
-        <Layout style={{ marginLeft: 220, background: 'var(--bg-elevated)', display: 'flex', flexDirection: 'column', height: '100vh' }}>
-          <AppHeader
-            isLoggedIn={auth.isLoggedIn}
-            username={auth.username}
-            handleLogin={handleLogin}
-            handleLogout={handleLogout}
-            title={viewTitles[activeView]}
-          />
+        <Layout style={{ marginLeft: 64, background: 'var(--bg-elevated)', display: 'flex', flexDirection: 'column', height: '100vh' }}>
+          {activeView === 'market' && (
+            <AppHeader
+              isLoggedIn={auth.isLoggedIn}
+              username={auth.username}
+              handleLogin={handleLogin}
+              handleLogout={handleLogout}
+              title={viewTitles[activeView]}
+              showAuth={true}
+            />
+          )}
 
           <Content style={{ padding: "24px", flex: 1, minHeight: 0, overflow: 'auto' }}>
             {renderContent()}

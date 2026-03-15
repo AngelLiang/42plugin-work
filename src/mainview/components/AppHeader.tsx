@@ -11,9 +11,10 @@ interface AppHeaderProps {
   handleLogin: () => void;
   handleLogout: () => void;
   title?: string;
+  showAuth?: boolean;
 }
 
-export function AppHeader({ isLoggedIn, username, handleLogin, handleLogout, title = '插件市场' }: AppHeaderProps) {
+export function AppHeader({ isLoggedIn, username, handleLogin, handleLogout, title = '插件市场', showAuth = true }: AppHeaderProps) {
   return (
     <Header
       style={{
@@ -34,41 +35,43 @@ export function AppHeader({ isLoggedIn, username, handleLogin, handleLogout, tit
         {title}
       </Title>
 
-      <Space>
-        {isLoggedIn ? (
-          <>
-            <Text style={{ color: 'var(--text-secondary)', fontSize: 13 }}>{username}</Text>
+      {showAuth && (
+        <Space>
+          {isLoggedIn ? (
+            <>
+              <Text style={{ color: 'var(--text-secondary)', fontSize: 13 }}>{username}</Text>
+              <Button
+                icon={<LogoutOutlined />}
+                onClick={handleLogout}
+                size="small"
+                style={{
+                  cursor: 'pointer',
+                  borderRadius: 'var(--radius-md)',
+                  fontSize: 12,
+                }}
+              >
+                退出
+              </Button>
+            </>
+          ) : (
             <Button
-              icon={<LogoutOutlined />}
-              onClick={handleLogout}
+              type="primary"
+              icon={<LoginOutlined />}
+              onClick={handleLogin}
               size="small"
               style={{
                 cursor: 'pointer',
                 borderRadius: 'var(--radius-md)',
+                background: 'oklch(0.546 0.245 262.881)',
+                borderColor: 'oklch(0.546 0.245 262.881)',
                 fontSize: 12,
               }}
             >
-              退出
+              登录 42Plugin
             </Button>
-          </>
-        ) : (
-          <Button
-            type="primary"
-            icon={<LoginOutlined />}
-            onClick={handleLogin}
-            size="small"
-            style={{
-              cursor: 'pointer',
-              borderRadius: 'var(--radius-md)',
-              background: 'oklch(0.546 0.245 262.881)',
-              borderColor: 'oklch(0.546 0.245 262.881)',
-              fontSize: 12,
-            }}
-          >
-            登录 42Plugin
-          </Button>
-        )}
-      </Space>
+          )}
+        </Space>
+      )}
     </Header>
   );
 }
