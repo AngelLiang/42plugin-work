@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Input, Row, Col, Typography, Divider, message, Drawer } from 'antd';
+import { Input, Row, Col, Typography, Divider, message, Drawer, Modal } from 'antd';
 import { usePlugins } from '@/hooks/usePlugins';
 import { useAuth } from '@/hooks/useAuth';
 import { SearchTab } from '@/components/SearchTab';
@@ -92,13 +92,22 @@ export function PluginMarketPage({ workDir }: { workDir?: string }) {
     }
   };
 
-  const handleUninstall = async (pluginId: string) => {
-    const result = await plugins.handleUninstall(pluginId);
-    if (result.success) {
-      message.success('卸载成功');
-    } else {
-      message.error(result.error || '卸载失败');
-    }
+  const handleUninstall = (pluginId: string) => {
+    Modal.confirm({
+      title: '确认卸载',
+      content: '确定要卸载该插件吗？',
+      okText: '卸载',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: async () => {
+        const result = await plugins.handleUninstall(pluginId, workDir);
+        if (result.success) {
+          message.success('卸载成功');
+        } else {
+          message.error(result.error || '卸载失败');
+        }
+      },
+    });
   };
 
   return (
@@ -190,14 +199,23 @@ export function PluginMarketPage({ workDir }: { workDir?: string }) {
                 message.error(result.error || '安装失败');
               }
             }}
-            onUninstall={async (pluginId) => {
-              const result = await plugins.handleUninstall(pluginId);
-              if (result.success) {
-                message.success('卸载成功');
-                setSelectedPlugin(p => p ? { ...p, installed: false } : p);
-              } else {
-                message.error(result.error || '卸载失败');
-              }
+            onUninstall={(pluginId) => {
+              Modal.confirm({
+                title: '确认卸载',
+                content: '确定要卸载该插件吗？',
+                okText: '卸载',
+                okType: 'danger',
+                cancelText: '取消',
+                onOk: async () => {
+                  const result = await plugins.handleUninstall(pluginId, workDir);
+                  if (result.success) {
+                    message.success('卸载成功');
+                    setSelectedPlugin(p => p ? { ...p, installed: false } : p);
+                  } else {
+                    message.error(result.error || '卸载失败');
+                  }
+                },
+              });
             }}
             isLoggedIn={auth.isLoggedIn}
           />

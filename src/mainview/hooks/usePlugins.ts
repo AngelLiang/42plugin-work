@@ -133,10 +133,10 @@ export function usePlugins() {
     }
   };
 
-  const handleUninstall = async (pluginId: string): Promise<ActionResult> => {
+  const handleUninstall = async (pluginId: string, workDir?: string): Promise<ActionResult> => {
     setActionLoading(true);
     try {
-      await uninstallPlugin(pluginId);
+      await uninstallPlugin(pluginId, workDir);
       await loadInstalledPlugins();
       setPlugins(prev => prev.map(p =>
         p.id === pluginId ? { ...p, installed: false } : p

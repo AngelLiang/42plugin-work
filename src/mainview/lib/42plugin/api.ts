@@ -237,8 +237,8 @@ export async function installPlugin(pluginId: string, workDir?: string): Promise
   await run42plugin(args, workDir);
 }
 
-export async function uninstallPlugin(pluginName: string): Promise<void> {
-  await run42plugin(['uninstall', pluginName, '-g']);
+export async function uninstallPlugin(pluginName: string, workDir?: string): Promise<void> {
+  await run42plugin(['uninstall', pluginName], workDir);
 }
 
 export async function login(): Promise<void> {
