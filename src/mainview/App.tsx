@@ -7,7 +7,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { PluginMarketPage } from "@/pages/PluginMarketPage";
 import { AccountPage } from "@/pages/AccountPage";
 import { ChatPage } from "@/pages/ChatPage";
-import { view } from "@/rpc";
+import { ProjectPickerPage } from "@/pages/ProjectPickerPage";
 
 const { Content } = Layout;
 
@@ -16,6 +16,7 @@ type ThemeMode = 'light' | 'dark';
 function App() {
   const auth = useAuth();
   const plugins = usePlugins();
+  const [showProjectPicker, setShowProjectPicker] = useState(true);
   const [activeView, setActiveView] = useState<'chat' | 'market' | 'settings'>('market');
   const [workDir, setWorkDir] = useState<string>(() => localStorage.getItem('workDir') || '');
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
@@ -30,22 +31,11 @@ function App() {
     localStorage.setItem('theme', themeMode);
   }, [themeMode]);
 
-  useEffect(() => {
-    const initializeWorkDir = async () => {
-      const savedWorkDir = localStorage.getItem('workDir');
-      if (!savedWorkDir) {
-        try {
-          const defaultPath = await view.rpc.request.initWorkDir({});
-          setWorkDir(defaultPath);
-          localStorage.setItem('workDir', defaultPath);
-        } catch (error) {
-          console.error('Failed to initialize work directory:', error);
-        }
-      }
-    };
-
-    initializeWorkDir();
-  }, []);
+  const handleProjectSelect = (path: string) => {
+    setWorkDir(path);
+    localStorage.setItem('workDir', path);
+    setShowProjectPicker(false);
+  };
 
   const handleThemeChange = (mode: ThemeMode) => {
     setThemeMode(mode);
@@ -176,6 +166,7 @@ function App() {
   return (
     <ConfigProvider theme={antdToken}>
       <Layout style={{ minHeight: "100vh", background: 'var(--bg-base)' }}>
+        {showProjectPicker && <ProjectPickerPage onSelect={handleProjectSelect} />}
         <Sidebar
           activeView={activeView}
           onViewChange={setActiveView}
