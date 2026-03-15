@@ -41,7 +41,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled, loading 
         style={{ borderRadius: 'var(--radius-lg)' }}
       />
       <Button
-        type="primary"
         icon={<Send size={16} />}
         onClick={handleSend}
         disabled={!input.trim() || disabled || loading}
@@ -49,14 +48,21 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled, loading 
         style={{
           cursor: (!input.trim() || disabled || loading) ? 'not-allowed' : 'pointer',
           borderRadius: 'var(--radius-md)',
-          background: 'oklch(0.546 0.245 262.881)',
-          borderColor: 'oklch(0.546 0.245 262.881)',
+          background: (!input.trim() || disabled || loading) ? 'var(--color-primary-subtle)' : 'var(--color-primary)',
+          borderColor: 'transparent',
+          color: (!input.trim() || disabled || loading) ? 'var(--color-primary)' : 'var(--text-on-primary)',
           alignSelf: 'flex-end',
           height: 36,
+          width: 36,
+          padding: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+          boxShadow: (!input.trim() || disabled || loading) ? 'none' : 'var(--shadow-primary)',
+          transition: 'all var(--transition-base)',
         }}
-      >
-        发送
-      </Button>
+      />
     </div>
   );
 };

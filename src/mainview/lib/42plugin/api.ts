@@ -9,8 +9,12 @@ export async function runViaShell(args: string[]): Promise<{ stdout: string; std
   return view.rpc.request.shellExec({ cmd: `42plugin ${escaped}` });
 }
 
-export async function run42plugin(args: string[]): Promise<string> {
-  const { stdout, stderr, code } = await runViaShell(args);
+export async function run42plugin(args: string[], workDir?: string): Promise<string> {
+  const escaped = args.map(a => `'${a.replace(/'/g, "'\\''")}'`).join(' ');
+  const cmd = workDir
+    ? `cd '${workDir.replace(/'/g, "'\\''")}' && 42plugin ${escaped}`
+    : `42plugin ${escaped}`;
+  const { stdout, stderr, code } = await view.rpc.request.shellExec({ cmd });
   if (code === 0) return stdout;
   throw new Error(stderr || stdout || '命令执行失败');
 }
@@ -229,10 +233,8 @@ export async function fetchConversationHistory(workDir?: string): Promise<Conver
 }
 
 export async function installPlugin(pluginId: string, workDir?: string): Promise<void> {
-  const args = workDir
-    ? ['install', pluginId, '--project-dir', workDir]
-    : ['install', pluginId, '-g'];
-  await run42plugin(args);
+  const args = ['install', pluginId];
+  await run42plugin(args, workDir);
 }
 
 export async function uninstallPlugin(pluginName: string): Promise<void> {
