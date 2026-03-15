@@ -2,8 +2,6 @@ import { BrowserWindow, BrowserView, Updater, Utils } from "electrobun/bun";
 import type { AppRPCSchema } from "./rpc-schema";
 import { exec, spawn } from "child_process";
 import { homedir } from "os";
-import { mkdir, access } from "fs/promises";
-import { join } from "path";
 
 const HOME_DIR = homedir();
 const PATH_EXPORT =
@@ -77,19 +75,6 @@ const rpc = BrowserView.defineRPC<AppRPCSchema>({
 
       getHomedir: () => {
         return homedir();
-      },
-
-      initWorkDir: async () => {
-        const defaultPath = join(HOME_DIR, 'showwork');
-
-        try {
-          await access(defaultPath);
-        } catch {
-          await mkdir(defaultPath, { recursive: true });
-          console.log(`Created default work directory: ${defaultPath}`);
-        }
-
-        return defaultPath;
       },
 
       httpFetch: async ({ url }) => {

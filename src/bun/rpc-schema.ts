@@ -24,7 +24,6 @@ export type AppRPCSchema = {
       shellExec: { params: { cmd: string }; response: ShellResult };
       openDirectory: { params: Record<string, never>; response: string | null };
       getHomedir: { params: Record<string, never>; response: string };
-      initWorkDir: { params: Record<string, never>; response: string };
       chatContinue: { params: ChatContinueArgs; response: { exitCode: number } };
       httpFetch: { params: { url: string }; response: string };
     };
