@@ -7,3 +7,4 @@ artifacts
 skills-lock.json
 tmp
 docs/
+.DS_Store
