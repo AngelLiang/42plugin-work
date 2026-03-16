@@ -7,11 +7,13 @@ const { Title, Text, Paragraph } = Typography;
 interface PluginDetailPageProps {
   plugin: Plugin;
   onInstall: (pluginId: string) => void;
+  onInstallGlobal: (pluginId: string) => void;
   onUninstall: (pluginId: string) => void;
   isLoggedIn: boolean;
+  actionLoading?: boolean;
 }
 
-export function PluginDetailPage({ plugin, onInstall, onUninstall, isLoggedIn }: PluginDetailPageProps) {
+export function PluginDetailPage({ plugin, onInstall, onInstallGlobal, onUninstall, isLoggedIn, actionLoading }: PluginDetailPageProps) {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
@@ -70,23 +72,35 @@ export function PluginDetailPage({ plugin, onInstall, onUninstall, isLoggedIn }:
           <Button
             danger
             icon={<DeleteOutlined />}
+            loading={actionLoading}
             onClick={() => onUninstall(plugin.id)}
           >
             卸载
           </Button>
         ) : (
-          <Button
-            type="primary"
-            icon={<DownloadOutlined />}
-            onClick={() => onInstall(plugin.id)}
-            disabled={!isLoggedIn}
-            style={{
-              background: 'oklch(0.546 0.245 262.881)',
-              borderColor: 'oklch(0.546 0.245 262.881)',
-            }}
-          >
-            安装
-          </Button>
+          <>
+            <Button
+              type="primary"
+              icon={<DownloadOutlined />}
+              loading={actionLoading}
+              onClick={() => onInstall(plugin.id)}
+              disabled={!isLoggedIn}
+              style={{
+                background: 'oklch(0.546 0.245 262.881)',
+                borderColor: 'oklch(0.546 0.245 262.881)',
+              }}
+            >
+              安装到项目
+            </Button>
+            <Button
+              icon={<DownloadOutlined />}
+              loading={actionLoading}
+              onClick={() => onInstallGlobal(plugin.id)}
+              disabled={!isLoggedIn}
+            >
+              安装到全局
+            </Button>
+          </>
         )}
         {!isLoggedIn && !plugin.installed && (
           <Text type="secondary" style={{ fontSize: 12 }}>请先登录后安装</Text>

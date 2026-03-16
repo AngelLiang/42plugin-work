@@ -12,12 +12,13 @@ interface SearchTabProps {
   isLoggedIn: boolean;
   loadingMore?: boolean;
   hasMoreListed?: boolean;
+  installingId?: string | null;
   onInstall: (pluginId: string) => void;
   onPluginClick: (plugin: Plugin) => void;
   onLoadMore?: () => void;
 }
 
-export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loadingMore, hasMoreListed, onInstall, onPluginClick, onLoadMore }: SearchTabProps) {
+export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loadingMore, hasMoreListed, installingId, onInstall, onPluginClick, onLoadMore }: SearchTabProps) {
   const isListMode = !searchQuery.trim();
   const displayPlugins = isListMode ? listedPlugins : plugins;
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -82,17 +83,18 @@ export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loa
                     type="primary"
                     size="small"
                     icon={<DownloadOutlined />}
+                    loading={installingId === plugin.id}
                     onClick={(e) => {
                       e.stopPropagation();
                       onInstall(plugin.id);
                     }}
-                    disabled={!isLoggedIn}
+                    disabled={!isLoggedIn || !!installingId}
                     style={{
                       cursor: isLoggedIn ? 'pointer' : 'not-allowed',
                       background: 'oklch(0.546 0.245 262.881)',
                       borderColor: 'oklch(0.546 0.245 262.881)',
                       borderRadius: 'var(--radius-md)',
-                      visibility: hoveredId === plugin.id ? 'visible' : 'hidden',
+                      visibility: hoveredId === plugin.id || installingId === plugin.id ? 'visible' : 'hidden',
                     }}
                   >
                     安装

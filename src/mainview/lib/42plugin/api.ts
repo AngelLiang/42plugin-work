@@ -4,17 +4,16 @@ import { view } from "../../rpc";
 // 注意：PATH 环境变量已在后端 (src/bun/index.ts) 中统一设置
 // 这里直接传递命令给后端执行
 
-export async function runViaShell(args: string[]): Promise<{ stdout: string; stderr: string; code: number | null }> {
-  const escaped = args.map(a => `'${a.replace(/'/g, "'\\''")}'`).join(' ');
-  return view.rpc.request.shellExec({ cmd: `42plugin ${escaped}` });
-}
-
-export async function run42plugin(args: string[], workDir?: string): Promise<string> {
+export async function runViaShell(args: string[], workDir?: string, timeout?: number): Promise<{ stdout: string; stderr: string; code: number | null }> {
   const escaped = args.map(a => `'${a.replace(/'/g, "'\\''")}'`).join(' ');
   const cmd = workDir
     ? `cd '${workDir.replace(/'/g, "'\\''")}' && 42plugin ${escaped}`
     : `42plugin ${escaped}`;
-  const { stdout, stderr, code } = await view.rpc.request.shellExec({ cmd });
+  return view.rpc.request.shellExec({ cmd, ...(timeout !== undefined && { timeout }) });
+}
+
+export async function run42plugin(args: string[], workDir?: string, timeout?: number): Promise<string> {
+  const { stdout, stderr, code } = await runViaShell(args, workDir, timeout);
   if (code === 0) return stdout;
   throw new Error(stderr || stdout || '命令执行失败');
 }
@@ -247,13 +246,14 @@ export async function fetchConversationHistory(workDir?: string): Promise<Conver
   }
 }
 
-export async function installPlugin(pluginId: string, workDir?: string): Promise<void> {
-  const args = ['install', pluginId];
+export async function installPlugin(pluginId: string, workDir?: string, global?: boolean): Promise<void> {
+  const args = global ? ['install', '-g', pluginId] : ['install', pluginId];
   await run42plugin(args, workDir);
 }
 
-export async function uninstallPlugin(pluginName: string, workDir?: string): Promise<void> {
-  await run42plugin(['uninstall', pluginName], workDir);
+export async function uninstallPlugin(pluginName: string, workDir?: string, global?: boolean): Promise<void> {
+  const args = global ? ['uninstall', '-g', pluginName] : ['uninstall', pluginName];
+  await run42plugin(args, workDir);
 }
 
 export async function login(): Promise<void> {
@@ -270,5 +270,39 @@ export async function checkPluginAvailability(): Promise<boolean> {
     return true;
   } catch {
     return false;
+  }
+}
+
+export async function fetchCliVersion(): Promise<string | null> {
+  try {
+    const { stdout } = await runViaShell(['--version']);
+    return stdout.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
+export interface CliUpdateInfo {
+  hasUpdate: boolean;
+  latestVersion?: string;
+  releaseDate?: string;
+}
+
+export async function checkCliUpdate(): Promise<CliUpdateInfo> {
+  try {
+    const { stdout, code } = await runViaShell(['upgrade', '--check']);
+    if (code !== 0) return { hasUpdate: false };
+    // eslint-disable-next-line no-control-regex
+    const clean = stdout.replace(/\x1b\[[0-9;]*m/g, '');
+    const latestMatch = clean.match(/最新版本:\s*(\S+)/);
+    const dateMatch = clean.match(/发布时间:\s*(\S+)/);
+    if (!latestMatch) return { hasUpdate: false };
+    return {
+      hasUpdate: true,
+      latestVersion: latestMatch[1],
+      releaseDate: dateMatch?.[1],
+    };
+  } catch {
+    return { hasUpdate: false };
   }
 }

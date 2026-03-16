@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Layout, Alert, message, ConfigProvider, theme } from "antd";
 import { useAuth } from "@/hooks/useAuth";
 import { usePlugins } from "@/hooks/usePlugins";
+import { fetchCliVersion, checkCliUpdate, run42plugin } from "@/lib/42plugin/api";
 import { AppHeader } from "@/components/AppHeader";
 import { Sidebar } from "@/components/Sidebar";
 import { PluginMarketPage } from "@/pages/PluginMarketPage";
@@ -16,6 +17,18 @@ function App() {
   const auth = useAuth();
   const plugins = usePlugins();
   const [activeView, setActiveView] = useState<'chat' | 'market' | 'settings'>('market');
+  const [cliVersion, setCliVersion] = useState<string | null>(null);
+  const [cliUpdateInfo, setCliUpdateInfo] = useState<{ latestVersion?: string; releaseDate?: string } | null>(null);
+  const [isUpgrading, setIsUpgrading] = useState(false);
+
+  useEffect(() => {
+    fetchCliVersion().then(v => {
+      setCliVersion(v);
+      if (v) checkCliUpdate().then(info => {
+        if (info.hasUpdate) setCliUpdateInfo({ latestVersion: info.latestVersion, releaseDate: info.releaseDate });
+      });
+    });
+  }, []);
   const [workDir, setWorkDir] = useState<string>(() => localStorage.getItem('workDir') || '');
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
     const saved = localStorage.getItem('theme');
@@ -172,6 +185,18 @@ function App() {
               handleLogout={handleLogout}
               title={viewTitles[activeView]}
               showAuth={true}
+              cliVersion={cliVersion}
+              hasCliUpdate={!!cliUpdateInfo}
+              cliUpdateInfo={cliUpdateInfo}
+              isUpgrading={isUpgrading}
+              onCliUpdate={() => {
+                setIsUpgrading(true);
+                run42plugin(['upgrade'], undefined, 300000)
+                  .then(() => fetchCliVersion())
+                  .then(v => { setCliVersion(v); setCliUpdateInfo(null); })
+                  .catch(() => message.error('升级失败，请稍后重试'))
+                  .finally(() => setIsUpgrading(false));
+              }}
             />
           )}
 

@@ -7,12 +7,14 @@ interface InstalledTabProps {
   projectPlugins: Plugin[];
   globalPlugins: Plugin[];
   workDir?: string;
+  uninstallingId?: string | null;
   onUninstall: (pluginId: string, isGlobal: boolean) => void;
   onPluginClick?: (plugin: Plugin) => void;
 }
 
-function PluginList({ plugins, onUninstall, onPluginClick }: {
+function PluginList({ plugins, uninstallingId, onUninstall, onPluginClick }: {
   plugins: Plugin[];
+  uninstallingId?: string | null;
   onUninstall: (pluginId: string, isGlobal: boolean) => void;
   onPluginClick?: (plugin: Plugin) => void;
 }) {
@@ -34,6 +36,8 @@ function PluginList({ plugins, onUninstall, onPluginClick }: {
             <Button
               size="small"
               danger
+              loading={uninstallingId === plugin.name}
+              disabled={!!uninstallingId}
               onClick={(e) => { e.stopPropagation(); onUninstall(plugin.name, !!plugin.isGlobal); }}
               style={{ borderRadius: 'var(--radius-sm)', fontSize: 11 }}
             >
@@ -84,7 +88,7 @@ function SectionTitle({ label, count }: { label: string; count: number }) {
   );
 }
 
-export function InstalledTab({ projectPlugins, globalPlugins, workDir, onUninstall, onPluginClick }: InstalledTabProps) {
+export function InstalledTab({ projectPlugins, globalPlugins, workDir, uninstallingId, onUninstall, onPluginClick }: InstalledTabProps) {
   return (
     <div>
       <SectionTitle label="项目插件" count={projectPlugins.length} />
@@ -93,13 +97,13 @@ export function InstalledTab({ projectPlugins, globalPlugins, workDir, onUninsta
       ) : projectPlugins.length === 0 ? (
         <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 16 }}>暂无项目插件</Text>
       ) : (
-        <PluginList plugins={projectPlugins} onUninstall={onUninstall} onPluginClick={onPluginClick} />
+        <PluginList plugins={projectPlugins} uninstallingId={uninstallingId} onUninstall={onUninstall} onPluginClick={onPluginClick} />
       )}
 
       <Divider style={{ margin: '12px 0', borderColor: 'var(--border-subtle)' }} />
 
       <SectionTitle label="全局插件" count={globalPlugins.length} />
-      <PluginList plugins={globalPlugins} onUninstall={onUninstall} onPluginClick={onPluginClick} />
+      <PluginList plugins={globalPlugins} uninstallingId={uninstallingId} onUninstall={onUninstall} onPluginClick={onPluginClick} />
     </div>
   );
 }

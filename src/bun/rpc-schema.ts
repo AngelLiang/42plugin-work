@@ -21,7 +21,7 @@ export type ChatChunk = {
 export type AppRPCSchema = {
   bun: RPCSchema<{
     requests: {
-      shellExec: { params: { cmd: string }; response: ShellResult };
+      shellExec: { params: { cmd: string; timeout?: number }; response: ShellResult };
       openDirectory: { params: Record<string, never>; response: string | null };
       getHomedir: { params: Record<string, never>; response: string };
       chatContinue: { params: ChatContinueArgs; response: { exitCode: number } };

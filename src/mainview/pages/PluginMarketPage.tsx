@@ -100,7 +100,7 @@ export function PluginMarketPage({ workDir }: { workDir?: string }) {
       okType: 'danger',
       cancelText: '取消',
       onOk: async () => {
-        const result = await plugins.handleUninstall(pluginId, isGlobal ? undefined : workDir);
+        const result = await plugins.handleUninstall(pluginId, workDir, isGlobal);
         if (result.success) {
           message.success('卸载成功');
         } else {
@@ -136,6 +136,7 @@ export function PluginMarketPage({ workDir }: { workDir?: string }) {
             isLoggedIn={auth.isLoggedIn}
             loadingMore={plugins.loadingMore}
             hasMoreListed={plugins.hasMoreListed}
+            installingId={plugins.installingId}
             onInstall={handleInstall}
             onPluginClick={setSelectedPlugin}
             onLoadMore={plugins.loadMorePlugins}
@@ -150,6 +151,7 @@ export function PluginMarketPage({ workDir }: { workDir?: string }) {
             projectPlugins={plugins.projectPlugins}
             globalPlugins={plugins.globalPlugins}
             workDir={workDir}
+            uninstallingId={plugins.uninstallingId}
             onUninstall={handleUninstall}
             onPluginClick={setSelectedPlugin}
           />
@@ -177,12 +179,23 @@ export function PluginMarketPage({ workDir }: { workDir?: string }) {
         {selectedPlugin && (
           <PluginDetailPage
             plugin={selectedPlugin}
+            actionLoading={plugins.actionLoading}
             onInstall={async (pluginId) => {
               if (!auth.isLoggedIn) { message.warning('请先登录'); return; }
               const result = await plugins.handleInstall(pluginId, workDir);
               if (result.success) {
                 message.success('安装成功');
                 setSelectedPlugin(p => p ? { ...p, installed: true } : p);
+              } else {
+                message.error(result.error || '安装失败');
+              }
+            }}
+            onInstallGlobal={async (pluginId) => {
+              if (!auth.isLoggedIn) { message.warning('请先登录'); return; }
+              const result = await plugins.handleInstallGlobal(pluginId);
+              if (result.success) {
+                message.success('安装到全局成功');
+                setSelectedPlugin(p => p ? { ...p, installed: true, isGlobal: true } : p);
               } else {
                 message.error(result.error || '安装失败');
               }
@@ -195,7 +208,7 @@ export function PluginMarketPage({ workDir }: { workDir?: string }) {
                 okType: 'danger',
                 cancelText: '取消',
                 onOk: async () => {
-                  const result = await plugins.handleUninstall(pluginId, selectedPlugin?.isGlobal ? undefined : workDir);
+                  const result = await plugins.handleUninstall(pluginId, workDir, selectedPlugin?.isGlobal);
                   if (result.success) {
                     message.success('卸载成功');
                     setSelectedPlugin(p => p ? { ...p, installed: false } : p);

@@ -33,7 +33,7 @@ let mainWindow: BrowserWindow<AppRPCSchema>;
 const rpc = BrowserView.defineRPC<AppRPCSchema>({
   handlers: {
     requests: {
-      shellExec: ({ cmd }) => {
+      shellExec: ({ cmd, timeout }) => {
         return new Promise((resolve) => {
           const startTime = Date.now();
           console.log(`[shellExec] Starting: ${cmd}`);
@@ -42,7 +42,7 @@ const rpc = BrowserView.defineRPC<AppRPCSchema>({
             `${PATH_EXPORT} && ${cmd}`,
             {
               shell: "/bin/sh",
-              timeout: 60000, // 增加到 60 秒
+              timeout: timeout ?? 60000,
               maxBuffer: MAX_BUFFER,
               env: { ...process.env, HOME: HOME_DIR }
             },

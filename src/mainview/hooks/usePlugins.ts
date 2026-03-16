@@ -33,6 +33,8 @@ export function usePlugins(workDir?: string) {
   const [loading, setLoading] = useState(false);
   const [pluginAvailable, setPluginAvailable] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [installingId, setInstallingId] = useState<string | null>(null);
+  const [uninstallingId, setUninstallingId] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<string | undefined>(undefined);
   const [filterSort, setFilterSort] = useState<string | undefined>(undefined);
 
@@ -127,6 +129,7 @@ export function usePlugins(workDir?: string) {
 
   const handleInstall = async (pluginId: string, workDir?: string): Promise<ActionResult> => {
     setActionLoading(true);
+    setInstallingId(pluginId);
     try {
       await installPlugin(pluginId, workDir);
       await loadInstalledPlugins();
@@ -141,13 +144,36 @@ export function usePlugins(workDir?: string) {
       return { success: false, error: '安装失败' };
     } finally {
       setActionLoading(false);
+      setInstallingId(null);
     }
   };
 
-  const handleUninstall = async (pluginId: string, workDir?: string): Promise<ActionResult> => {
+  const handleInstallGlobal = async (pluginId: string): Promise<ActionResult> => {
     setActionLoading(true);
+    setInstallingId(pluginId);
     try {
-      await uninstallPlugin(pluginId, workDir);
+      await installPlugin(pluginId, undefined, true);
+      await loadInstalledPlugins();
+      setPlugins(prev => prev.map(p =>
+        p.id === pluginId ? { ...p, installed: true } : p
+      ));
+      setListedPlugins(prev => prev.map(p =>
+        p.id === pluginId ? { ...p, installed: true } : p
+      ));
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: '安装失败' };
+    } finally {
+      setActionLoading(false);
+      setInstallingId(null);
+    }
+  };
+
+  const handleUninstall = async (pluginId: string, workDir?: string, isGlobal?: boolean): Promise<ActionResult> => {
+    setActionLoading(true);
+    setUninstallingId(pluginId);
+    try {
+      await uninstallPlugin(pluginId, isGlobal ? undefined : workDir, isGlobal);
       await loadInstalledPlugins();
       setPlugins(prev => prev.map(p =>
         p.id === pluginId ? { ...p, installed: false } : p
@@ -160,6 +186,7 @@ export function usePlugins(workDir?: string) {
       return { success: false, error: '卸载失败' };
     } finally {
       setActionLoading(false);
+      setUninstallingId(null);
     }
   };
 
@@ -172,12 +199,15 @@ export function usePlugins(workDir?: string) {
     loading,
     pluginAvailable,
     actionLoading,
+    installingId,
+    uninstallingId,
     loadingMore,
     hasMoreListed,
     filterType,
     filterSort,
     handleSearch,
     handleInstall,
+    handleInstallGlobal,
     handleUninstall,
     loadMorePlugins,
     handleFilter,
