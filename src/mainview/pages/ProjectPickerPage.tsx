@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Spin, Empty, Button } from 'antd';
+import { Spin, Empty } from 'antd';
 import { FolderOpenOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { fetchRecentProjects, RecentProject } from '@/lib/claude/projects';
 import { view } from '@/rpc';
@@ -113,15 +113,29 @@ export const ProjectPickerPage: React.FC<ProjectPickerPageProps> = ({ onSelect, 
 
         {/* Footer */}
         <div style={{ padding: '12px 20px 20px', borderTop: '1px solid var(--border-subtle)' }}>
-          <Button
-            type="dashed"
-            block
-            icon={<FolderOpenOutlined />}
+          <button
             onClick={handleBrowse}
-            style={{ borderRadius: 'var(--radius-md)', color: 'var(--text-secondary)' }}
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              gap: 8, padding: '6px 12px',
+              background: 'transparent', cursor: 'pointer',
+              border: '1px dashed var(--border-subtle)',
+              borderRadius: 'var(--radius-md)',
+              color: 'var(--text-secondary)', fontSize: 14,
+              transition: 'color 0.15s, border-color 0.15s',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.color = 'var(--text-primary)';
+              e.currentTarget.style.borderColor = 'var(--border-default)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.color = 'var(--text-secondary)';
+              e.currentTarget.style.borderColor = 'var(--border-subtle)';
+            }}
           >
+            <FolderOpenOutlined />
             浏览其他目录...
-          </Button>
+          </button>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Layout, Alert, message, ConfigProvider, theme } from "antd";
+import { Layout, Alert, message, ConfigProvider, theme, Modal } from "antd";
 import { useAuth } from "@/hooks/useAuth";
 import { usePlugins } from "@/hooks/usePlugins";
 import { fetchCliVersion, checkCliUpdate, run42plugin } from "@/lib/42plugin/api";
@@ -8,6 +8,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { PluginMarketPage } from "@/pages/PluginMarketPage";
 import { AccountPage } from "@/pages/AccountPage";
 import { ChatPage } from "@/pages/ChatPage";
+import { ProjectPickerPage } from "@/pages/ProjectPickerPage";
 
 const { Content } = Layout;
 
@@ -30,6 +31,7 @@ function App() {
     });
   }, []);
   const [workDir, setWorkDir] = useState<string>(() => localStorage.getItem('workDir') || '');
+  const [showWorkDirPicker, setShowWorkDirPicker] = useState<boolean>(() => !localStorage.getItem('workDir'));
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
     const saved = localStorage.getItem('theme');
     return (saved === 'dark' || saved === 'light') ? saved : 'light';
@@ -43,6 +45,7 @@ function App() {
   const handleWorkDirChange = (path: string) => {
     setWorkDir(path);
     localStorage.setItem('workDir', path);
+    setShowWorkDirPicker(false);
   };
 
   const handleThemeChange = (mode: ThemeMode) => {
@@ -168,6 +171,26 @@ function App() {
 
   return (
     <ConfigProvider theme={antdToken}>
+      <ConfigProvider theme={{ token: { colorIcon: 'var(--text-muted)', colorIconHover: 'var(--text-primary)' } }}>
+        <Modal
+          open={showWorkDirPicker}
+          onCancel={() => setShowWorkDirPicker(false)}
+          footer={null}
+          width={520}
+          styles={{ body: { padding: 0 } }}
+          centered
+          closable={!!workDir}
+          keyboard={!!workDir}
+        >
+        <ProjectPickerPage
+          inline
+          onSelect={(path) => {
+            handleWorkDirChange(path);
+            message.success('工作目录已设置');
+          }}
+        />
+        </Modal>
+      </ConfigProvider>
       <Layout style={{ minHeight: "100vh", background: 'var(--bg-base)' }}>
         <Sidebar
           activeView={activeView}
@@ -191,7 +214,7 @@ function App() {
               isUpgrading={isUpgrading}
               onCliUpdate={() => {
                 setIsUpgrading(true);
-                run42plugin(['upgrade'], undefined, 300000)
+                run42plugin(['upgrade', '-y'], undefined, 300000)
                   .then(() => fetchCliVersion())
                   .then(v => { setCliVersion(v); setCliUpdateInfo(null); })
                   .catch(() => message.error('升级失败，请稍后重试'))
