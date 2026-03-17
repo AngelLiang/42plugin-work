@@ -20,9 +20,9 @@ export function PluginDetailPage({ plugin, onInstall, onInstallGlobal, onUninsta
         <Space align="center" style={{ flexWrap: 'wrap' }}>
           <Title level={4} style={{ margin: 0, color: 'var(--text-primary)' }}>{plugin.name}</Title>
           <Tag style={{
-            background: 'oklch(0.546 0.245 262.881 / 15%)',
-            color: 'oklch(0.623 0.214 259.815)',
-            border: '1px solid oklch(0.546 0.245 262.881 / 30%)',
+            background: 'var(--color-primary-subtle)',
+            color: 'var(--color-accent)',
+            border: '1px solid var(--color-primary-border)',
             borderRadius: 'var(--radius-sm)',
             fontSize: 12,
           }}>
@@ -86,8 +86,8 @@ export function PluginDetailPage({ plugin, onInstall, onInstallGlobal, onUninsta
               onClick={() => onInstall(plugin.id)}
               disabled={!isLoggedIn}
               style={{
-                background: 'oklch(0.546 0.245 262.881)',
-                borderColor: 'oklch(0.546 0.245 262.881)',
+                background: 'var(--color-primary)',
+                borderColor: 'var(--color-primary)',
               }}
             >
               安装到项目

@@ -146,8 +146,8 @@ function App() {
     itemSelectedColor: 'var(--text-primary)',
     itemBg: 'transparent',
     itemHoverBg: 'var(--bg-hover)',
-    itemSelectedBg: 'oklch(0.546 0.245 262.881 / 8%)',
-    itemActiveBg: 'oklch(0.546 0.245 262.881 / 10%)',
+    itemSelectedBg: 'oklch(0.620 0.200 40 / 8%)',
+    itemActiveBg: 'oklch(0.620 0.200 40 / 10%)',
     subMenuItemBg: 'transparent',
   };
 
@@ -161,7 +161,7 @@ function App() {
     ? {
         algorithm: theme.darkAlgorithm,
         token: {
-          colorPrimary: '#7c3aed',
+          colorPrimary: '#ea580c',
           colorBgBase: '#1a1614',
           colorBgContainer: '#242020',
           colorBgElevated: '#2a2626',
@@ -176,10 +176,10 @@ function App() {
     : {
         algorithm: theme.defaultAlgorithm,
         token: {
-          colorPrimary: '#7c3aed',
-          colorBgBase: '#ffffff',
-          colorBgContainer: '#f5f5f4',
-          colorBgElevated: '#efefed',
+          colorPrimary: '#ea580c',
+          colorBgBase: '#faf5f0',
+          colorBgContainer: '#ffffff',
+          colorBgElevated: '#ffffff',
           colorBorder: 'rgba(0,0,0,0.12)',
           colorBorderSecondary: 'rgba(0,0,0,0.08)',
           fontFamily: "'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",

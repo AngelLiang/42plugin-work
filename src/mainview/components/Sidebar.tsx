@@ -47,10 +47,11 @@ const menuItems = [
         {/* Logo */}
         <div style={{
           width: 32, height: 32, borderRadius: '9px',
-          background: 'oklch(0.546 0.245 262.881)',
+          background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '14px', fontWeight: 700, color: '#fff',
           marginBottom: 16,
+          boxShadow: '0 2px 8px oklch(0.620 0.200 40 / 35%)',
         }}>
           42
         </div>

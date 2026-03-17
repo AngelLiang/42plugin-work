@@ -5,13 +5,13 @@ export default {
 		extend: {
 			colors: {
 				primary: {
-					DEFAULT: 'oklch(0.546 0.245 262.881)',
-					hover: 'oklch(0.490 0.245 262.881)',
-					active: 'oklch(0.440 0.245 262.881)',
-					subtle: 'oklch(0.546 0.245 262.881 / 12%)',
-					border: 'oklch(0.546 0.245 262.881 / 35%)',
+					DEFAULT: 'oklch(0.620 0.200 40)',
+					hover: 'oklch(0.560 0.200 40)',
+					active: 'oklch(0.510 0.200 40)',
+					subtle: 'oklch(0.620 0.200 40 / 12%)',
+					border: 'oklch(0.620 0.200 40 / 35%)',
 				},
-				accent: 'oklch(0.623 0.214 259.815)',
+				accent: 'oklch(0.700 0.180 45)',
 				danger: {
 					DEFAULT: 'oklch(0.577 0.245 27.325)',
 					hover: 'oklch(0.520 0.245 27.325)',
@@ -47,8 +47,8 @@ export default {
 				sm: '0 1px 4px oklch(0 0 0 / 10%), 0 1px 2px oklch(0 0 0 / 6%)',
 				md: '0 4px 12px oklch(0 0 0 / 10%), 0 2px 4px oklch(0 0 0 / 6%)',
 				lg: '0 8px 24px oklch(0 0 0 / 12%), 0 4px 8px oklch(0 0 0 / 6%)',
-				primary: '0 2px 8px oklch(0.546 0.245 262.881 / 30%)',
-				'primary-lg': '0 4px 16px oklch(0.546 0.245 262.881 / 35%)',
+				primary: '0 2px 8px oklch(0.620 0.200 40 / 30%)',
+				'primary-lg': '0 4px 16px oklch(0.620 0.200 40 / 35%)',
 			},
 			transitionDuration: {
 				fast: '100ms',

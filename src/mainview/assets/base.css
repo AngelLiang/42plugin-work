@@ -1,20 +1,21 @@
 :root {
   /* Background layers - Light mode (default) */
-  --bg-base: oklch(1 0 0);
-  --bg-surface: oklch(0.97 0.001 106);
-  --bg-elevated: oklch(0.94 0.002 106);
-  --bg-overlay: oklch(0.91 0.003 106);
+  --bg-base: oklch(0.985 0.005 80);
+  --bg-surface: oklch(0.965 0.006 80);
+  --bg-elevated: oklch(0.940 0.008 80);
+  --bg-overlay: oklch(0.915 0.010 80);
+  --bg-card: oklch(1 0 0);
   --bg-hover: oklch(0 0 0 / 5%);
   --bg-active: oklch(0 0 0 / 8%);
 
-  /* Brand colors - Purple */
-  --color-primary: oklch(0.546 0.245 262.881);
-  --color-primary-hex: #7c3aed;
-  --color-primary-hover: oklch(0.490 0.245 262.881);
-  --color-primary-active: oklch(0.440 0.245 262.881);
-  --color-primary-subtle: oklch(0.546 0.245 262.881 / 12%);
-  --color-primary-border: oklch(0.546 0.245 262.881 / 35%);
-  --color-accent: oklch(0.623 0.214 259.815);
+  /* Brand colors - Orange */
+  --color-primary: oklch(0.620 0.200 40);
+  --color-primary-hex: #ea580c;
+  --color-primary-hover: oklch(0.560 0.200 40);
+  --color-primary-active: oklch(0.510 0.200 40);
+  --color-primary-subtle: oklch(0.620 0.200 40 / 12%);
+  --color-primary-border: oklch(0.620 0.200 40 / 35%);
+  --color-accent: oklch(0.700 0.180 45);
 
   /* Text */
   --text-primary: oklch(0.147 0.004 49.25);
@@ -27,7 +28,7 @@
   --border-subtle: oklch(0.923 0.003 48.717);
   --border-default: oklch(0.88 0.004 48.717);
   --border-strong: oklch(0.78 0.006 48.717);
-  --border-focus: oklch(0.546 0.245 262.881);
+  --border-focus: oklch(0.620 0.200 40);
 
   /* Semantic colors */
   --color-success: oklch(0.627 0.194 142.5);
@@ -37,11 +38,11 @@
   --color-danger: oklch(0.577 0.245 27.325);
   --color-danger-hover: oklch(0.520 0.245 27.325);
   --color-danger-subtle: oklch(0.577 0.245 27.325 / 12%);
-  --color-info: oklch(0.623 0.214 259.815);
-  --color-info-subtle: oklch(0.623 0.214 259.815 / 12%);
+  --color-info: oklch(0.700 0.180 45);
+  --color-info-subtle: oklch(0.700 0.180 45 / 12%);
 
   /* Chat bubbles */
-  --bubble-user-bg: oklch(0.546 0.245 262.881);
+  --bubble-user-bg: oklch(0.620 0.200 40);
   --bubble-user-text: oklch(1 0 0);
   --bubble-assistant-bg: oklch(0.94 0.002 106);
   --bubble-assistant-border: oklch(0.88 0.004 48.717);
@@ -61,8 +62,8 @@
   --shadow-sm: 0 1px 4px oklch(0 0 0 / 10%), 0 1px 2px oklch(0 0 0 / 6%);
   --shadow-md: 0 4px 12px oklch(0 0 0 / 10%), 0 2px 4px oklch(0 0 0 / 6%);
   --shadow-lg: 0 8px 24px oklch(0 0 0 / 12%), 0 4px 8px oklch(0 0 0 / 6%);
-  --shadow-primary: 0 2px 8px oklch(0.546 0.245 262.881 / 30%);
-  --shadow-primary-lg: 0 4px 16px oklch(0.546 0.245 262.881 / 35%);
+  --shadow-primary: 0 2px 8px oklch(0.620 0.200 40 / 30%);
+  --shadow-primary-lg: 0 4px 16px oklch(0.620 0.200 40 / 35%);
 
   /* Transition system */
   --transition-fast: 100ms ease;
@@ -82,6 +83,7 @@
   --bg-surface: oklch(0.18 0.004 49.25);
   --bg-elevated: oklch(0.21 0.004 49.25);
   --bg-overlay: oklch(0.24 0.004 49.25);
+  --bg-card: oklch(0.21 0.004 49.25);
   --bg-hover: oklch(1 0 0 / 6%);
   --bg-active: oklch(1 0 0 / 10%);
 

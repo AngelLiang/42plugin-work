@@ -83,7 +83,7 @@ export const ProjectPickerPage: React.FC<ProjectPickerPageProps> = ({ onSelect, 
                 onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
               >
-                <FolderOpenOutlined style={{ fontSize: 16, color: 'oklch(0.623 0.214 259.815)', flexShrink: 0 }} />
+                <FolderOpenOutlined style={{ fontSize: 16, color: 'var(--color-accent)', flexShrink: 0 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{
                     fontSize: 13, fontWeight: 500, color: 'var(--text-primary)',

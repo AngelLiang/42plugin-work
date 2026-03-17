@@ -64,7 +64,7 @@ export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loa
             title={
               <Space>
                 {plugin.name}
-                {plugin.installed && <Badge status="success" color="oklch(0.623 0.214 259.815)" />}
+                {plugin.installed && <Badge status="success" color="var(--color-accent)" />}
               </Space>
             }
             extra={
@@ -73,7 +73,7 @@ export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loa
                   <Button
                     type="text"
                     size="small"
-                    icon={<CheckCircleOutlined style={{ color: 'oklch(0.623 0.214 259.815)' }} />}
+                    icon={<CheckCircleOutlined style={{ color: 'var(--color-accent)' }} />}
                     disabled
                   >
                     已安装
@@ -91,8 +91,8 @@ export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loa
                     disabled={!isLoggedIn || !!installingId}
                     style={{
                       cursor: isLoggedIn ? 'pointer' : 'not-allowed',
-                      background: 'oklch(0.546 0.245 262.881)',
-                      borderColor: 'oklch(0.546 0.245 262.881)',
+                      background: 'var(--color-primary)',
+                      borderColor: 'var(--color-primary)',
                       borderRadius: 'var(--radius-md)',
                       visibility: hoveredId === plugin.id || installingId === plugin.id ? 'visible' : 'hidden',
                     }}
@@ -117,9 +117,9 @@ export function SearchTab({ plugins, listedPlugins, searchQuery, isLoggedIn, loa
               </span>
               {plugin.type && (
                 <Tag style={{
-                  background: 'oklch(0.546 0.245 262.881 / 15%)',
-                  color: 'oklch(0.623 0.214 259.815)',
-                  border: '1px solid oklch(0.546 0.245 262.881 / 30%)',
+                  background: 'var(--color-primary-subtle)',
+                  color: 'var(--color-accent)',
+                  border: '1px solid var(--color-primary-border)',
                   borderRadius: 'var(--radius-sm)',
                   fontSize: 11,
                   margin: 0,

@@ -268,7 +268,7 @@ export function ChatPage({ workDir, onWorkDirChange }: ChatPageProps) {
                   }}
                 >
                   {msg.role === 'assistant' && (
-                    <Avatar size={30} icon={<RobotOutlined />} style={{ background: 'oklch(0.546 0.245 262.881)', flexShrink: 0, marginTop: 2, boxShadow: '0 0 0 2px oklch(0.546 0.245 262.881 / 20%)' }} />
+                    <Avatar size={30} icon={<RobotOutlined />} style={{ background: 'var(--color-primary)', flexShrink: 0, marginTop: 2, boxShadow: '0 0 0 2px var(--color-primary-subtle)' }} />
                   )}
                   <div style={{
                     maxWidth: '75%', padding: '10px 14px',
@@ -276,7 +276,7 @@ export function ChatPage({ workDir, onWorkDirChange }: ChatPageProps) {
                     background: msg.role === 'user' ? 'var(--bubble-user-bg)' : 'var(--bubble-assistant-bg)',
                     color: msg.role === 'user' ? 'var(--bubble-user-text)' : 'var(--bubble-assistant-text)',
                     border: msg.role === 'assistant' ? '1px solid var(--bubble-assistant-border)' : 'none',
-                    boxShadow: msg.role === 'user' ? '0 2px 8px oklch(0.546 0.245 262.881 / 25%)' : '0 1px 4px oklch(0 0 0 / 20%)',
+                    boxShadow: msg.role === 'user' ? 'var(--shadow-primary)' : '0 1px 4px oklch(0 0 0 / 20%)',
                     wordBreak: 'break-word', fontSize: '14px', lineHeight: '1.65',
                   }}>
                     <div style={{ fontSize: '10px', opacity: 0.45, marginBottom: '5px', letterSpacing: '0.02em' }}>
@@ -285,13 +285,13 @@ export function ChatPage({ workDir, onWorkDirChange }: ChatPageProps) {
                     {renderContent(msg.content, msg.role)}
                   </div>
                   {msg.role === 'user' && (
-                    <Avatar size={30} icon={<UserOutlined />} style={{ background: 'oklch(0.546 0.245 262.881)', flexShrink: 0, marginTop: 2, boxShadow: '0 0 0 2px oklch(0.546 0.245 262.881 / 20%)' }} />
+                    <Avatar size={30} icon={<UserOutlined />} style={{ background: 'var(--color-primary)', flexShrink: 0, marginTop: 2, boxShadow: '0 0 0 2px var(--color-primary-subtle)' }} />
                   )}
                 </div>
               ))}
               {isStreaming && currentMessage && (
                 <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '10px', marginBottom: '20px' }}>
-                  <Avatar size={30} icon={<RobotOutlined />} style={{ background: 'oklch(0.546 0.245 262.881)', flexShrink: 0, marginTop: 2, boxShadow: '0 0 0 2px oklch(0.546 0.245 262.881 / 20%)' }} />
+                  <Avatar size={30} icon={<RobotOutlined />} style={{ background: 'var(--color-primary)', flexShrink: 0, marginTop: 2, boxShadow: '0 0 0 2px var(--color-primary-subtle)' }} />
                   <div style={{
                     maxWidth: '75%', padding: '10px 14px',
                     borderRadius: 'var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-sm)',

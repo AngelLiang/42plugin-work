@@ -136,7 +136,7 @@ const rpc = BrowserView.defineRPC<AppRPCSchema>({
 const url = await getMainViewUrl();
 
 mainWindow = new BrowserWindow({
-  title: "活水插件桌面版",
+  title: "42plugin work",
   url,
   rpc,
   frame: {
@@ -147,4 +147,4 @@ mainWindow = new BrowserWindow({
   },
 });
 
-console.log("Work42 app started!");
+console.log("42plugin work app started!");

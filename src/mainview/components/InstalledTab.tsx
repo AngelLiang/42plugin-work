@@ -51,9 +51,9 @@ function PluginList({ plugins, uninstallingId, onUninstall, onPluginClick }: {
             </Text>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2, minWidth: 0 }}>
               <Tag style={{
-                background: 'oklch(0.546 0.245 262.881 / 15%)',
-                color: 'oklch(0.623 0.214 259.815)',
-                border: '1px solid oklch(0.546 0.245 262.881 / 30%)',
+                background: 'var(--color-primary-subtle)',
+                color: 'var(--color-accent)',
+                border: '1px solid var(--color-primary-border)',
                 borderRadius: 'var(--radius-sm)',
                 fontSize: 10,
                 margin: 0,
@@ -77,8 +77,8 @@ function SectionTitle({ label, count }: { label: string; count: number }) {
       {count > 0 && (
         <span style={{
           fontSize: 10,
-          background: 'oklch(0.546 0.245 262.881 / 20%)',
-          color: 'oklch(0.623 0.214 259.815)',
+          background: 'var(--color-primary-subtle)',
+          color: 'var(--color-accent)',
           padding: '1px 6px',
           borderRadius: 'var(--radius-2xl)',
           fontWeight: 500,

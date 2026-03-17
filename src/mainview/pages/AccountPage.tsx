@@ -24,7 +24,7 @@ export function AccountPage({ themeMode, onThemeChange }: AccountPageProps) {
       <Card
         title={
           <Space>
-            <BulbOutlined style={{ color: 'oklch(0.623 0.214 259.815)' }} />
+            <BulbOutlined style={{ color: 'var(--color-accent)' }} />
             <span>外观</span>
           </Space>
         }
@@ -53,7 +53,7 @@ export function AccountPage({ themeMode, onThemeChange }: AccountPageProps) {
       <Card
         title={
           <Space>
-            <TranslationOutlined style={{ color: 'oklch(0.623 0.214 259.815)' }} />
+            <TranslationOutlined style={{ color: 'var(--color-accent)' }} />
             <span>语言</span>
           </Space>
         }
@@ -82,20 +82,20 @@ export function AccountPage({ themeMode, onThemeChange }: AccountPageProps) {
       <Card
         title={
           <Space>
-            <InfoCircleOutlined style={{ color: 'oklch(0.623 0.214 259.815)' }} />
+            <InfoCircleOutlined style={{ color: 'var(--color-accent)' }} />
             <span>关于</span>
           </Space>
         }
         style={{ borderRadius: 'var(--radius-xl)', borderColor: 'var(--border-default)' }}
       >
         <Descriptions column={1} size="small">
-          <Descriptions.Item label="应用名称">活水插件桌面版</Descriptions.Item>
+          <Descriptions.Item label="应用名称">42plugin work</Descriptions.Item>
           <Descriptions.Item label="版本">0.1.0</Descriptions.Item>
           <Descriptions.Item label="构建时间">Development</Descriptions.Item>
         </Descriptions>
         <Divider style={{ margin: '16px 0', borderColor: 'var(--border-subtle)' }} />
         <Text type="secondary" style={{ fontSize: '12px' }}>
-        活水插件桌面版 是一个基于 Electrobun 和 React 构建的桌面应用，用于管理 活水插件。
+        42plugin work是一个基于 Electrobun 和 React 构建的桌面应用，用于管理42plugin命令行工具。
           <br />
           插件市场登录功能请前往「插件市场」页面。
         </Text>

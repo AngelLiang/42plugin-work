@@ -93,8 +93,8 @@ export function AppHeader({ isLoggedIn, username, handleLogin, handleLogout, tit
               style={{
                 cursor: 'pointer',
                 borderRadius: 'var(--radius-md)',
-                background: 'oklch(0.546 0.245 262.881)',
-                borderColor: 'oklch(0.546 0.245 262.881)',
+                background: 'var(--color-primary)',
+                borderColor: 'var(--color-primary)',
                 fontSize: 12,
               }}
             >
