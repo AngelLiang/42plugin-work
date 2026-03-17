@@ -89,13 +89,13 @@ export function AccountPage({ themeMode, onThemeChange }: AccountPageProps) {
         style={{ borderRadius: 'var(--radius-xl)', borderColor: 'var(--border-default)' }}
       >
         <Descriptions column={1} size="small">
-          <Descriptions.Item label="应用名称">Work42</Descriptions.Item>
-          <Descriptions.Item label="版本">1.0.0</Descriptions.Item>
+          <Descriptions.Item label="应用名称">活水插件桌面版</Descriptions.Item>
+          <Descriptions.Item label="版本">0.1.0</Descriptions.Item>
           <Descriptions.Item label="构建时间">Development</Descriptions.Item>
         </Descriptions>
         <Divider style={{ margin: '16px 0', borderColor: 'var(--border-subtle)' }} />
         <Text type="secondary" style={{ fontSize: '12px' }}>
-          Work42 是一个基于 Electrobun 和 React 构建的桌面应用，用于管理 42plugin 插件。
+        活水插件桌面版 是一个基于 Electrobun 和 React 构建的桌面应用，用于管理 活水插件。
           <br />
           插件市场登录功能请前往「插件市场」页面。
         </Text>

@@ -136,7 +136,7 @@ const rpc = BrowserView.defineRPC<AppRPCSchema>({
 const url = await getMainViewUrl();
 
 mainWindow = new BrowserWindow({
-  title: "Work42",
+  title: "活水插件桌面版",
   url,
   rpc,
   frame: {
