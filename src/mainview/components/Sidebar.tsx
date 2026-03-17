@@ -25,7 +25,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 const menuItems = [
     // { key: 'chat', icon: <MessageOutlined style={{ fontSize: 18 }} />, label: '会话' },
     { key: 'market', icon: <AppstoreOutlined style={{ fontSize: 18 }} />, label: '插件市场' },
-    { key: 'settings', icon: <SettingOutlined style={{ fontSize: 18 }} />, label: '设置' },
   ];
 
   return (
@@ -75,6 +74,20 @@ const menuItems = [
 
         <Divider style={{ margin: '8px 0', borderColor: 'var(--border-subtle)', width: '80%', minWidth: 'unset' }} />
 
+        <Tooltip title="设置" placement="right">
+          <Button
+            type="text"
+            icon={<SettingOutlined style={{ fontSize: 18 }} />}
+            onClick={() => onViewChange('settings')}
+            style={{
+              color: activeView === 'settings' ? 'var(--color-primary)' : 'var(--text-secondary)',
+              width: 40, height: 40,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              borderRadius: 'var(--radius-md)',
+            }}
+          />
+        </Tooltip>
+
         <Tooltip title={workDir || '选择工作目录'} placement="right">
           <Button
             type="text"
@@ -85,7 +98,6 @@ const menuItems = [
               width: 40, height: 40,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               borderRadius: 'var(--radius-md)',
-              // marginBottom: 12,
             }}
           />
         </Tooltip>
