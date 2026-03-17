@@ -266,11 +266,24 @@ export async function logout(): Promise<void> {
 
 export async function checkPluginAvailability(): Promise<boolean> {
   try {
-    await runViaShell(['--version']);
-    return true;
+    const { code } = await runViaShell(['--version']);
+    return code === 0;
   } catch {
     return false;
   }
+}
+
+export async function checkBunAvailability(): Promise<boolean> {
+  try {
+    const { code } = await view.rpc!.request.shellExec({ cmd: 'which bun', timeout: 5000 });
+    return code === 0;
+  } catch {
+    return false;
+  }
+}
+
+export async function install42plugin(): Promise<{ stdout: string; stderr: string; code: number | null }> {
+  return view.rpc!.request.shellExec({ cmd: 'bun add -g @42ailab/42plugin', timeout: 120000 });
 }
 
 export async function fetchCliVersion(): Promise<string | null> {

@@ -25,7 +25,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 const menuItems = [
     // { key: 'chat', icon: <MessageOutlined style={{ fontSize: 18 }} />, label: '会话' },
     { key: 'market', icon: <AppstoreOutlined style={{ fontSize: 18 }} />, label: '插件市场' },
-    // { key: 'settings', icon: <SettingOutlined style={{ fontSize: 18 }} />, label: '设置' },
+    { key: 'settings', icon: <SettingOutlined style={{ fontSize: 18 }} />, label: '设置' },
   ];
 
   return (
