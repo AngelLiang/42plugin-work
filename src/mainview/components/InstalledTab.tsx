@@ -1,4 +1,4 @@
-import { List, Tag, Button, Typography, Divider } from 'antd';
+import { List, Button, Typography, Divider } from 'antd';
 import type { Plugin } from '@/lib/42plugin/types';
 
 const { Text } = Typography;
@@ -47,22 +47,8 @@ function PluginList({ plugins, uninstallingId, onUninstall, onPluginClick }: {
         >
           <div style={{ flex: 1, minWidth: 0 }}>
             <Text strong style={{ fontSize: 13, display: 'block', color: 'var(--text-primary)' }} ellipsis>
-              {plugin.name}
+              {plugin.name?.includes('/') ? plugin.name.split('/').pop() : plugin.name}
             </Text>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2, minWidth: 0 }}>
-              <Tag style={{
-                background: 'var(--color-primary-subtle)',
-                color: 'var(--color-accent)',
-                border: '1px solid var(--color-primary-border)',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: 10,
-                margin: 0,
-                flexShrink: 0,
-              }}>v{plugin.version}</Tag>
-              <Text type="secondary" style={{ fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {plugin.author}
-              </Text>
-            </div>
           </div>
         </List.Item>
       )}

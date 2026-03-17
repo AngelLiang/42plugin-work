@@ -1,5 +1,5 @@
 import { Button, Tag, Space, Typography, Divider } from 'antd';
-import { CheckCircleOutlined, DownloadOutlined, DeleteOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, DownloadOutlined, DeleteOutlined, StarOutlined, LinkOutlined } from '@ant-design/icons';
 import type { Plugin } from '@/lib/42plugin/types';
 
 const { Title, Text, Paragraph } = Typography;
@@ -14,11 +14,14 @@ interface PluginDetailPageProps {
 }
 
 export function PluginDetailPage({ plugin, onInstall, onInstallGlobal, onUninstall, isLoggedIn, actionLoading }: PluginDetailPageProps) {
+  const displayName = plugin.name?.includes('/') ? plugin.name.split('/').pop() : plugin.name;
+  const authorName = plugin.fullName ? plugin.fullName.split('/')[0] : plugin.author;
+
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <Space align="center" style={{ flexWrap: 'wrap' }}>
-          <Title level={4} style={{ margin: 0, color: 'var(--text-primary)' }}>{plugin.name}</Title>
+      <div style={{ marginBottom: 6 }}>
+        <Space align="center" size={8}>
+          <Title level={4} style={{ margin: 0, color: 'var(--text-primary)' }}>{displayName}</Title>
           <Tag style={{
             background: 'var(--color-primary-subtle)',
             color: 'var(--color-accent)',
@@ -29,14 +32,51 @@ export function PluginDetailPage({ plugin, onInstall, onInstallGlobal, onUninsta
             v{plugin.version}
           </Tag>
           {plugin.installed && <Tag color="success" icon={<CheckCircleOutlined />}>已安装</Tag>}
+        </Space>
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <Space size={4} align="center">
           <Text type="secondary" style={{ fontSize: 13 }}>
-            by {plugin.fullName ? plugin.fullName.split('/')[0] : plugin.author}
-            {plugin.fullName && <span style={{ marginLeft: 8, opacity: 0.6 }}>{plugin.fullName}</span>}
+            by {authorName}
           </Text>
+          {plugin.fullName && (
+            <Text type="secondary" style={{ fontSize: 12, opacity: 0.6 }}>· {plugin.fullName}</Text>
+          )}
+          {/* P3: homepage 外链 */}
+          {plugin.homepage && (
+            <a href={plugin.homepage} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--color-accent)', marginLeft: 4 }}>
+              <LinkOutlined />
+            </a>
+          )}
         </Space>
       </div>
 
       <Divider style={{ borderColor: 'var(--border-subtle)', margin: '0 0 20px' }} />
+
+      {(plugin.downloads != null || plugin.stars != null || plugin.score10 != null) && (
+        <div style={{ marginBottom: 16 }}>
+          <Space size={16}>
+            {plugin.downloads != null && (
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                <DownloadOutlined style={{ marginRight: 4 }} />
+                {plugin.downloads.toLocaleString()} 下载
+              </Text>
+            )}
+            {plugin.stars != null && (
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                <StarOutlined style={{ marginRight: 4 }} />
+                {plugin.stars.toLocaleString()} Stars
+              </Text>
+            )}
+            {plugin.score10 != null && (
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                评分 {plugin.score10.toFixed(1)} / 10
+              </Text>
+            )}
+          </Space>
+        </div>
+      )}
 
       {plugin.tags && plugin.tags.length > 0 && (
         <div style={{ marginBottom: 16 }}>
@@ -55,7 +95,7 @@ export function PluginDetailPage({ plugin, onInstall, onInstallGlobal, onUninsta
 
       <div style={{ marginBottom: 20 }}>
         <Paragraph style={{ color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 0 }}>
-          {plugin.description || '暂无描述'}
+          {plugin.descriptionZh || plugin.description || '暂无描述'}
         </Paragraph>
       </div>
 
