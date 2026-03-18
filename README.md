@@ -2,6 +2,8 @@
 
 一个基于 Electrobun + React + Ant Design 构建的桌面应用，提供现代化的图形界面来管理 [42plugin](https://42plugin.com) 插件生态。
 
+![plugin-market](imgs/plugin-market.png)
+
 ## 功能特性
 
 ### 插件市场
