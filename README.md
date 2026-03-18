@@ -1,61 +1,109 @@
-# React + Tailwind + Vite Electrobun Template
+# 42plugin Work
 
-A fast Electrobun desktop app template with React, Tailwind CSS, and Vite for hot module replacement (HMR).
+一个基于 Electrobun + React + Ant Design 构建的桌面应用，提供现代化的图形界面来管理 [42plugin](https://42plugin.com) 插件生态。
 
-## Getting Started
+## 功能特性
+
+### 插件市场
+- 浏览、搜索 42plugin 插件
+- 按类型过滤（Skill、Command、Hook、Agent）
+- 按活水指数、最近更新、下载量排序
+- 一键安装 / 卸载插件
+- 查看插件详情（版本、作者、下载量、评分、主页链接）
+- 分别管理项目级和全局插件
+
+### 项目管理
+- 快速切换工作目录
+- 显示最近使用的项目列表
+- 支持浏览并选择任意目录
+
+### 账户与设置
+- 42plugin 账户登录 / 登出
+- 深色 / 浅色主题切换
+- 界面语言切换（中文 / 英文）
+- 查看应用版本和 CLI 版本信息
+
+## 快速开始
 
 ```bash
-# Install dependencies
+# 安装依赖
 bun install
 
-# Development without HMR (uses bundled assets)
-bun run dev
-
-# Development with HMR (recommended)
+# 开发模式（带 HMR，推荐）
 bun run dev:hmr
 
-# Build for production
-bun run build
+# 开发模式（不带 HMR）
+bun run dev
 
-# Build for production release
-bun run build:prod
+# 构建
+vite build
+
+# Canary 环境构建
+bun run build:canary
 ```
 
-## How HMR Works
+## HMR 工作原理
 
-When you run `bun run dev:hmr`:
+运行 `bun run dev:hmr` 时：
 
-1. **Vite dev server** starts on `http://localhost:5173` with HMR enabled
-2. **Electrobun** starts and detects the running Vite server
-3. The app loads from the Vite dev server instead of bundled assets
-4. Changes to React components update instantly without full page reload
+1. Vite dev server 启动在 `http://localhost:5173`
+2. Electrobun 检测到 dev server，自动加载其 URL
+3. React 组件更改即时热更新，无需手动重建
 
-When you run `bun run dev` (without HMR):
+运行 `bun run dev`（不带 HMR）时：
 
-1. Electrobun starts and loads from `views://mainview/index.html`
-2. You need to rebuild (`bun run build`) to see changes
+1. Electrobun 从 `views://mainview/index.html` 加载
+2. 修改代码后需手动执行 `vite build` 才能看到变化
 
-## Project Structure
+## 项目结构
 
 ```
 ├── src/
 │   ├── bun/
-│   │   └── index.ts        # Main process (Electrobun/Bun)
+│   │   ├── index.ts              # 主进程入口，RPC handlers
+│   │   └── rpc-schema.ts         # RPC 类型定义
 │   └── mainview/
-│       ├── App.tsx         # React app component
-│       ├── main.tsx        # React entry point
-│       ├── index.html      # HTML template
-│       └── index.css       # Tailwind CSS
-├── electrobun.config.ts    # Electrobun configuration
-├── vite.config.ts          # Vite configuration
-├── tailwind.config.js      # Tailwind configuration
+│       ├── App.tsx               # 主应用组件，路由和主题管理
+│       ├── main.tsx              # React 入口
+│       ├── rpc.ts                # RPC 客户端
+│       ├── pages/                # 页面组件
+│       │   ├── PluginMarketPage.tsx
+│       │   ├── AccountPage.tsx
+│       │   └── ProjectPickerPage.tsx
+│       ├── components/           # UI 组件
+│       ├── hooks/                # React Hooks
+│       └── lib/
+│           ├── 42plugin/         # 42plugin CLI 集成
+│           └── claude/           # 对话数据读写
+├── resources/
+│   └── scripts/
+│       └── chat-continue.js      # 流式对话脚本
+├── electrobun.config.ts          # Electrobun 配置
+├── vite.config.ts                # Vite 配置
 └── package.json
 ```
 
-## Customizing
+## 技术栈
 
-- **React components**: Edit files in `src/mainview/`
-- **Tailwind theme**: Edit `tailwind.config.js`
-- **Vite settings**: Edit `vite.config.ts`
-- **Window settings**: Edit `src/bun/index.ts`
-- **App metadata**: Edit `electrobun.config.ts`
+| 层级 | 技术 |
+|------|------|
+| 桌面框架 | [Electrobun](https://electrobun.dev) 1.15 |
+| 运行时 | Bun |
+| 前端框架 | React 18 + Vite |
+| UI 组件库 | Ant Design 6 |
+| 样式 | Tailwind CSS |
+| 语言 | TypeScript |
+
+## 架构说明
+
+项目采用 Electrobun 双进程架构：
+
+- **Bun 主进程**（`src/bun/`）：负责窗口管理、shell 命令执行、RPC handler 实现
+- **React 渲染进程**（`src/mainview/`）：负责 UI 渲染，通过 RPC 与主进程通信
+
+所有 42plugin CLI 调用通过 `src/mainview/lib/42plugin/api.ts` 统一封装，执行前会自动设置 PATH 环境变量以确保找到 CLI 工具。
+
+## 前置依赖
+
+- [Bun](https://bun.sh) >= 1.0
+- [42plugin CLI](https://42plugin.com) — 插件管理功能依赖此 CLI，应用内支持一键安装
