@@ -14,8 +14,13 @@ const ICONSET_DIR = join(ROOT, "icon.iconset");
 
 // SVG 定义，使用与 CSS 相同的渐变色
 const svg = (size: number) => {
-  const radius = Math.round(size * 0.22); // 约 22% 圆角，对应 32px 时的 9px
-  const fontSize = Math.round(size * 0.48);
+  // macOS 图标规范：内容占画布 80%，四周留 10% 空白
+  const pad = Math.round(size * 0.10);
+  const inner = size - pad * 2;
+  const radius = Math.round(inner * 0.22);
+  const fontSize = Math.round(inner * 0.48);
+  const cx = size / 2;
+  const cy = size / 2;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
   <defs>
     <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -23,9 +28,9 @@ const svg = (size: number) => {
       <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
     </linearGradient>
   </defs>
-  <rect width="${size}" height="${size}" rx="${radius}" ry="${radius}" fill="url(#grad)" />
+  <rect x="${pad}" y="${pad}" width="${inner}" height="${inner}" rx="${radius}" ry="${radius}" fill="url(#grad)" />
   <text
-    x="50%" y="65%"
+    x="${cx}" y="${cy + Math.round(inner * 0.18)}"
     dominant-baseline="middle"
     text-anchor="middle"
     font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif"
