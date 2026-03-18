@@ -61,13 +61,15 @@ const menuItems = [
           onClick={(e) => onViewChange(e.key as 'chat' | 'market' | 'settings')}
           items={menuItems.map(item => ({
             key: item.key,
+            label: null,
+            style: { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, width: 40, height: 40 },
             icon: (
               <Tooltip title={item.label} placement="right">
                 {item.icon}
               </Tooltip>
             ),
           }))}
-          style={{ border: 'none', background: 'transparent', width: '100%' }}
+          style={{ border: 'none', background: 'transparent', overflow: 'hidden' }}
         />
 
         <div style={{ flex: 1 }} />
