@@ -2,9 +2,9 @@ import type { ElectrobunConfig } from "electrobun";
 
 export default {
 	app: {
-		name: "work42",
-		identifier: "work42.42ailab.dev",
-		version: "1.0.0",
+		name: "42plugin-work",
+		identifier: "42plugin-work.42ailab.dev",
+		version: "0.1.0",
 	},
 	build: {
 		// Vite builds to dist/, we copy from there
