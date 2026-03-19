@@ -4,12 +4,27 @@ import { view } from "../../rpc";
 // 注意：PATH 环境变量已在后端 (src/bun/index.ts) 中统一设置
 // 这里直接传递命令给后端执行
 
+let _platform: string | null = null;
+async function getPlatform(): Promise<string> {
+  if (!_platform) _platform = await view.rpc!.request.getPlatform({});
+  return _platform;
+}
+
 export async function runViaShell(args: string[], workDir?: string, timeout?: number): Promise<{ stdout: string; stderr: string; code: number | null }> {
-  const escaped = args.map(a => `'${a.replace(/'/g, "'\\''")}'`).join(' ');
-  const cmd = workDir
-    ? `cd '${workDir.replace(/'/g, "'\\''")}' && 42plugin ${escaped}`
-    : `42plugin ${escaped}`;
-  return view.rpc.request.shellExec({ cmd, ...(timeout !== undefined && { timeout }) });
+  const isWin = (await getPlatform()) === "win32";
+  let cmd: string;
+  if (isWin) {
+    const escaped = args.map(a => `"${a.replace(/"/g, '\\"')}"`).join(' ');
+    cmd = workDir
+      ? `cd /d "${workDir}" && 42plugin ${escaped}`
+      : `42plugin ${escaped}`;
+  } else {
+    const escaped = args.map(a => `'${a.replace(/'/g, "'\\''")}'`).join(' ');
+    cmd = workDir
+      ? `cd '${workDir.replace(/'/g, "'\\''")}' && 42plugin ${escaped}`
+      : `42plugin ${escaped}`;
+  }
+  return view.rpc!.request.shellExec({ cmd, ...(timeout !== undefined && { timeout }) });
 }
 
 export async function run42plugin(args: string[], workDir?: string, timeout?: number): Promise<string> {
@@ -179,41 +194,16 @@ export async function fetchConversationHistory(workDir?: string): Promise<Conver
   if (!workDir) return [];
 
   try {
-    const encodedPath = workDir.replace(/\//g, '-');
-    const projectDir = `$HOME/.claude/projects/${encodedPath}`;
+    const { files } = await view.rpc!.request.getConversationFiles({ projectPath: workDir });
+    if (files.length === 0) return [];
 
-    // 第一步：获取按修改时间降序排列的文件路径和时间戳
-    const listResult = await view.rpc.request.shellExec({
-      cmd: `find "${projectDir}" -name "*.jsonl" -exec stat -f "%m\t%N" {} \\; 2>/dev/null | sort -rn | head -10`,
-    });
-
-    if (!listResult.stdout.trim()) return [];
-
-    const fileEntries = listResult.stdout.trim().split('\n').filter(Boolean).map(line => {
-      const tab = line.indexOf('\t');
-      return { mtime: parseInt(line.slice(0, tab), 10), path: line.slice(tab + 1) };
-    });
-
-    if (fileEntries.length === 0) return [];
-
-    // 第二步：批量读取每个文件头部
-    const quotedPaths = fileEntries.map(e => `"${e.path}"`).join(' ');
-    const headResult = await view.rpc.request.shellExec({ cmd: `head -20 ${quotedPaths}` });
-
-    // 解析 head 多文件输出（==> filepath <== 分隔）
     const conversations: Conversation[] = [];
-    const parts = headResult.stdout.split(/^==> (.+) <==\n?/m);
-    // parts: ['', path1, content1, path2, content2, ...]
 
-    for (let i = 1; i < parts.length; i += 2) {
-      const filePath = parts[i].trim();
-      const content = parts[i + 1] || '';
-      const entry = fileEntries.find(e => e.path === filePath);
-
-      const sessionId = filePath.split('/').pop()?.replace('.jsonl', '') || '';
+    for (const file of files) {
+      const sessionId = file.path.replace(/\\/g, '/').split('/').pop()?.replace('.jsonl', '') || '';
       let title = '';
 
-      for (const line of content.split('\n')) {
+      for (const line of file.headLines.split('\n')) {
         if (!line.trim()) continue;
         try {
           const obj = JSON.parse(line);
@@ -234,7 +224,7 @@ export async function fetchConversationHistory(workDir?: string): Promise<Conver
       conversations.push({
         id: sessionId,
         title: title || '未命名对话',
-        updatedAt: entry ? new Date(entry.mtime * 1000).toISOString() : new Date().toISOString(),
+        updatedAt: new Date(file.mtime).toISOString(),
         projectPath: workDir,
       });
     }
@@ -275,7 +265,7 @@ export async function checkPluginAvailability(): Promise<boolean> {
 
 export async function checkBunAvailability(): Promise<boolean> {
   try {
-    const { code } = await view.rpc!.request.shellExec({ cmd: 'which bun', timeout: 5000 });
+    const { code } = await view.rpc!.request.shellExec({ cmd: 'bun --version', timeout: 5000 });
     return code === 0;
   } catch {
     return false;

@@ -2,10 +2,24 @@ import { BrowserWindow, BrowserView, Updater, Utils } from "electrobun/bun";
 import type { AppRPCSchema } from "./rpc-schema";
 import { exec, spawn } from "child_process";
 import { homedir } from "os";
+import { readdirSync, statSync, readFileSync } from "fs";
+import { join } from "path";
 
 const HOME_DIR = homedir();
-const PATH_EXPORT =
-  `export PATH="$PATH:${HOME_DIR}/.bun/bin:${HOME_DIR}/.npm-global/bin:${HOME_DIR}/.yarn/bin:/usr/local/bin:/opt/homebrew/bin"`;
+const IS_WIN = process.platform === "win32";
+
+function buildEnv() {
+  const extraPaths = IS_WIN
+    ? [`${process.env.APPDATA}\\npm`, `${HOME_DIR}\\.bun\\bin`]
+    : [`${HOME_DIR}/.bun/bin`, `${HOME_DIR}/.npm-global/bin`,
+       `${HOME_DIR}/.yarn/bin`, `/usr/local/bin`, `/opt/homebrew/bin`];
+  const sep = IS_WIN ? ";" : ":";
+  return {
+    ...process.env,
+    HOME: HOME_DIR,
+    PATH: [...extraPaths, process.env.PATH ?? ""].join(sep),
+  };
+}
 
 const MAX_BUFFER = 10 * 1024 * 1024; // 10MB
 
@@ -39,12 +53,12 @@ const rpc = BrowserView.defineRPC<AppRPCSchema>({
           console.log(`[shellExec] Starting: ${cmd}`);
 
           exec(
-            `${PATH_EXPORT} && ${cmd}`,
+            cmd,
             {
-              shell: "/bin/sh",
+              shell: IS_WIN ? undefined : "/bin/sh",
               timeout: timeout ?? 60000,
               maxBuffer: MAX_BUFFER,
-              env: { ...process.env, HOME: HOME_DIR }
+              env: buildEnv(),
             },
             (err, stdout, stderr) => {
               const duration = Date.now() - startTime;
@@ -77,6 +91,29 @@ const rpc = BrowserView.defineRPC<AppRPCSchema>({
         return homedir();
       },
 
+      getPlatform: () => {
+        return process.platform;
+      },
+
+      getConversationFiles: ({ projectPath }) => {
+        const encodedPath = projectPath.replace(/[/\\]/g, "-");
+        const projectDir = join(HOME_DIR, ".claude", "projects", encodedPath);
+        try {
+          const files = readdirSync(projectDir)
+            .filter(f => f.endsWith(".jsonl"))
+            .map(f => {
+              const full = join(projectDir, f);
+              const headLines = readFileSync(full, "utf8").split("\n").slice(0, 20).join("\n");
+              return { path: full, mtime: statSync(full).mtimeMs, headLines };
+            })
+            .sort((a, b) => b.mtime - a.mtime)
+            .slice(0, 10);
+          return { files };
+        } catch {
+          return { files: [] };
+        }
+      },
+
       httpFetch: async ({ url }) => {
         const response = await fetch(url);
         return response.text();
@@ -85,10 +122,10 @@ const rpc = BrowserView.defineRPC<AppRPCSchema>({
       chatContinue: (args) => {
         return new Promise((resolve, reject) => {
           const scriptPath = `${import.meta.dir}/../../resources/scripts/chat-continue.js`;
-          const escapedArgs = JSON.stringify(args).replace(/'/g, "'\\''");
-          const cmd = `${PATH_EXPORT} && bun "${scriptPath}" '${escapedArgs}'`;
 
-          const child = spawn("/bin/sh", ["-c", cmd]);
+          const child = IS_WIN
+            ? spawn("bun", [scriptPath, JSON.stringify(args)], { env: buildEnv() })
+            : spawn("/bin/sh", ["-c", `bun "${scriptPath}" '${JSON.stringify(args).replace(/'/g, "'\\''")}'`], { env: buildEnv() });
           let buffer = "";
 
           child.stdout.on("data", (data: Buffer) => {
